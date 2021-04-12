@@ -7,7 +7,7 @@
   * [Improving regularized singular value decomposition for collaborative filtering](https://www.cs.uic.edu/~liub/KDD-cup-2007/proceedings/Regular-Paterek.pdf)
 
 ## 2. Autoencoders
-  **I-AutoRec and U-Autorec**\
+  **I-AutoRec and U-Autorec:** 
   I-AutoRec seems to perform better than U-AutoRec.\
   **Enhance Dataset with Autoencoders**
 
