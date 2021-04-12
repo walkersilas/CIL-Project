@@ -22,3 +22,4 @@
   * [Neural Collaborative Filtering](https://arxiv.org/pdf/1708.05031.pdf)
   * [Deep Learning Architecture for Collaborative Filtering Recommender Systems](https://www.researchgate.net/publication/340416554_Deep_Learning_Architecture_for_Collaborative_Filtering_Recommender_Systems)
   * [Deep Learning based Recommender System: A Survey and New Perspectives](https://arxiv.org/pdf/1707.07435.pdf)
+  * [Neural Graph Collaborative Filtering](https://arxiv.org/pdf/1905.08108.pdf) --> [code](https://github.com/metahexane/ngcf_pytorch_g61/blob/master/ngcf.py) and [medium](https://medium.com/@yusufnoor_88274/implementing-neural-graph-collaborative-filtering-in-pytorch-4d021dff25f3)
