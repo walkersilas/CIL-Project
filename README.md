@@ -18,6 +18,7 @@
 ## 3. Neural Networks
   **Deep and Wide Neural Networks**\
   **Include Reliabilities in Neural Networks**
+  **Graph Neural Networks**
 
   * [Neural Collaborative Filtering](https://arxiv.org/pdf/1708.05031.pdf)
   * [Deep Learning Architecture for Collaborative Filtering Recommender Systems](https://www.researchgate.net/publication/340416554_Deep_Learning_Architecture_for_Collaborative_Filtering_Recommender_Systems)
