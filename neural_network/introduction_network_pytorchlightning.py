@@ -101,20 +101,18 @@ class NCF(pl.LightningModule):
 
         predictions = self(users, movies)
         loss = mse_loss(ratings, predictions)
-        return {'loss': loss}
+        self.log('loss', loss)
+        return loss
 
     def validation_step(self, batch, batch_idx):
         users, movies, ratings = batch
 
         predictions = self(users, movies)
         val_loss = mse_loss(ratings, predictions)
-        return {'val_loss': val_loss}
-
-    def validation_epoch_end(self, outputs):
-        val_loss = torch.mean(torch.stack([output['val_loss'] for output in outputs]))
-        reconstruction_rmse = math.sqrt(val_loss)
-        out = {'val_loss': val_loss, 'rmse': reconstruction_rmse}
-        return {**out, 'log': out}
+        rmse = math.sqrt(val_loss)
+        self.log('val_loss', val_loss)
+        self.log('rmse', rmse)
+        return val_loss
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=hyper_params['learning_rate'])
