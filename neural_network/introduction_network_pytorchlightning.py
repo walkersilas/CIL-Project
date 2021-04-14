@@ -111,8 +111,9 @@ class NCF(pl.LightningModule):
         return {'val_loss': val_loss}
 
     def validation_epoch_end(self, outputs):
-        val_loss = math.sqrt(torch.mean(torch.stack([output['val_loss'] for output in outputs])))
-        out = {'val_loss': val_loss}
+        val_loss = torch.mean(torch.stack([output['val_loss'] for output in outputs]))
+        reconstruction_rmse = math.sqrt(val_loss)
+        out = {'val_loss': val_loss, 'rmse': reconstruction_rmse}
         return {**out, 'log': out}
 
     def configure_optimizers(self):
