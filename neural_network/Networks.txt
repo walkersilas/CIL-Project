@@ -1,0 +1,47 @@
+Network_01:
+	embedding_size=256, dropout=0.5, batch_size=1024, num_epochs=25
+	Linear(512), ReLU, Linear(512), ReLU, Linear(1024), ReLU, Linear(512), ReLU, Linear(512), ReLU, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(5), Dropout
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_02:
+	embedding_size=128, dropout=0.5, batch_size=1024, num_epochs=25
+	Linear(256), ReLU, Linear(512), ReLU, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(5), Dropout
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_03:
+	embedding_size=256, dropout=0.5, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, Linear(32), ReLU, Dropout, Linear(16), ReLU, Linear(8), ReLU, Linear(1), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_04:
+	embedding_size=256, dropout=0.5, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, Linear(32), ReLU, Dropout, Linear(16), ReLU, Linear(8), ReLU, Linear(5), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_05:
+	embedding_size=128, dropout=0.5, batch_size=1024, num_epochs=25
+	Linear(256), ReLU, Dropout, Linear(512), ReLU, Dropout, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(5), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_06:
+	embedding_size=256, dropout=0.3, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, Linear(32), ReLU, Dropout, Linear(16), ReLU, Linear(8), ReLU, Linear(1), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
+
+
+Network_07:
+	embedding_size=512, dropout=0.5, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, Linear(32), ReLU, Dropout, Linear(16), ReLU, Linear(8), ReLU, Linear(1), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
