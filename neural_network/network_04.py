@@ -224,6 +224,7 @@ def main():
     print('Output Shape', output.shape)
 
     output.to_csv('output.csv', index=False)
+    comet_logger.experiment.log_asset('output.csv')
 
 
 if __name__ == '__main__':
