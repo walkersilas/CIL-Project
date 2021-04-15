@@ -18,6 +18,9 @@ pytorch_lightning.utilities.seed.seed_everything(7)
 torch.manual_seed(7)
 np.random.seed(7)
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print('Using device:', device)
+
 comet_api_key_path = "../comet.json"
 comet_api_key = json.load(open(comet_api_key_path))
 
@@ -30,7 +33,7 @@ hyper_params = {
     'dropout': 0.5,
     'reduce_dataset': False,
     'train_data_path': '../data/data_train.csv',
-    'test_data_path': '../data/data_test.csv',
+    'sample_submission_path': '../data/sampleSubmission.csv',
     'number_of_users': 10000,
     'number_of_movies': 1000
 }
@@ -48,7 +51,7 @@ def get_score(predictions, target_values):
     return rmse(predictions, target_values)
 
 
-def load_data(file_path):
+def load_data(file_path, submission=False):
     data_pd = pd.read_csv(file_path)
 
     if hyper_params['reduce_dataset']:
@@ -58,8 +61,11 @@ def load_data(file_path):
     print()
     print('Shape', data_pd.shape)
 
-    train_pd, test_pd = train_test_split(data_pd, train_size=hyper_params['train_size'], random_state=42)
-    return train_pd, test_pd
+    if submission:
+        return data_pd, None
+    else:
+        train_pd, test_pd = train_test_split(data_pd, train_size=hyper_params['train_size'], random_state=42)
+        return train_pd, test_pd
 
 
 def extract_users_items_predictions(data_pd):
@@ -78,7 +84,17 @@ def create_dataloader(users, movies, predictions):
         TensorDataset(users_torch, movies_torch, predictions_torch),
         batch_size=hyper_params['batch_size']
     )
+    return dataloader
 
+
+def create_evaluation_dataloader(users, movies):
+    users_torch = torch.tensor(users, dtype=torch.int64)
+    movies_torch = torch.tensor(movies, dtype=torch.int64)
+
+    dataloader = DataLoader(
+        TensorDataset(users_torch, movies_torch),
+        batch_size=hyper_params['batch_size']
+    )
     return dataloader
 
 
@@ -154,15 +170,25 @@ class NCF(pl.LightningModule):
         return self.feed_forward(concat)
 
 
+def predict(model, dataloader):
+    with torch.no_grad():
+        all_predictions = []
+        for users_batch, movies_batch in dataloader:
+            predictions_batch = model.to(device)(users_batch.to(device), movies_batch.to(device))
+            all_predictions.append(predictions_batch.cpu())
+        return torch.cat(all_predictions)
+
 
 def main():
     comet_logger = CometLogger(
         api_key=comet_api_key["api_key"],
         project_name=comet_api_key["project_name"],
-        workspace=comet_api_key["workspace"]
+        workspace=comet_api_key["workspace"],
+        disabled=hyper_params['reduce_dataset']
     )
     comet_logger.log_hyperparams(hyper_params)
 
+    # Initialize and train the model
     train_pd, test_pd = load_data(hyper_params['train_data_path'])
     train_users, train_movies, train_ratings = extract_users_items_predictions(train_pd)
     test_users, test_movies, test_ratings = extract_users_items_predictions(test_pd)
@@ -179,6 +205,25 @@ def main():
                          logger=comet_logger)
 
     trainer.fit(ncf, train_loader, test_loader)
+
+    # Make the predictions on the model
+    evaluation_pd, _ = load_data(hyper_params['sample_submission_path'], True)
+    evaluation_users, evaluation_movies, _ = extract_users_items_predictions(evaluation_pd)
+    evaluation_dataloader = create_evaluation_dataloader(evaluation_users, evaluation_movies)
+
+    print('Evaluation_pd Shape', evaluation_pd.shape)
+
+    predictions_one_hot = predict(ncf, evaluation_dataloader)
+    predictions = torch.argmax(predictions_one_hot, dim=1) + 1
+
+    predictions_pd = pd.DataFrame(data=predictions.numpy(), columns=['Prediction'])
+    output = pd.concat([evaluation_pd.Id.astype(str), predictions_pd], axis=1)
+
+    print(output.head(5))
+    print()
+    print('Output Shape', output.shape)
+
+    output.to_csv('output.csv', index=False)
 
 
 if __name__ == '__main__':
