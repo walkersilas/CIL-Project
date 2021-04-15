@@ -24,7 +24,7 @@ comet_api_key = json.load(open(comet_api_key_path))
 hyper_params = {
     'batch_size': 1024,
     'num_epochs': 25,
-    'embedding_size': 128,
+    'embedding_size': 256,
     'learning_rate': 1e-3,
     'train_size': 0.9,
     'dropout': 0.5,
@@ -102,18 +102,19 @@ class NCF(pl.LightningModule):
 
         # Neural network used for training on concatenation of users and movies embedding
         self.feed_forward = nn.Sequential(
-            nn.Linear(in_features=2 * embedding_size, out_features=256),
+            nn.Dropout(p=hyper_params['dropout']),
+            nn.Linear(in_features=2 * embedding_size, out_features=64),
             nn.ReLU(),
-            nn.Linear(in_features=256, out_features=512),
+            nn.Dropout(p=hyper_params['dropout']),
+            nn.Linear(in_features=64, out_features=32),
             nn.ReLU(),
-            nn.Linear(in_features=512, out_features=256),
+            nn.Dropout(p=hyper_params['dropout']),
+            nn.Linear(in_features=32, out_features=16),
             nn.ReLU(),
-            nn.Linear(in_features=256, out_features=128),
+            nn.Linear(in_features=16, out_features=8),
             nn.ReLU(),
-            nn.Linear(in_features=128, out_features=64),
-            nn.ReLU(),
-            nn.Linear(in_features=64, out_features=5),
-            nn.Dropout(p=hyper_params['dropout'])
+            nn.Linear(in_features=8, out_features=5),
+            nn.ReLU()
         )
 
     def training_step(self, batch, batch_idx):
@@ -174,7 +175,7 @@ def main():
               hyper_params['embedding_size'])
 
     trainer = pl.Trainer(gpus=1,
-                         max_epochs=hyper_params['num_epochs'],
+                         max_epochs=(hyper_params['num_epochs'] if not hyper_params['reduce_dataset'] else 1),
                          logger=comet_logger)
 
     trainer.fit(ncf, train_loader, test_loader)

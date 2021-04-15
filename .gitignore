@@ -1,3 +1,5 @@
 .ipynb_checkpoints
 .idea
 cil-project
+comet.json
+init_windows.bat

@@ -18,7 +18,7 @@ pytorch_lightning.utilities.seed.seed_everything(7)
 torch.manual_seed(7)
 np.random.seed(7)
 
-comet_api_key_path = "../../../API_Keys/comet.json"
+comet_api_key_path = "../comet.json"
 comet_api_key = json.load(open(comet_api_key_path))
 
 hyper_params = {

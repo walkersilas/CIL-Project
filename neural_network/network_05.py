@@ -104,8 +104,10 @@ class NCF(pl.LightningModule):
         self.feed_forward = nn.Sequential(
             nn.Linear(in_features=2 * embedding_size, out_features=256),
             nn.ReLU(),
+            nn.Dropout(p=hyper_params['dropout']),
             nn.Linear(in_features=256, out_features=512),
             nn.ReLU(),
+            nn.Dropout(p=hyper_params['dropout']),
             nn.Linear(in_features=512, out_features=256),
             nn.ReLU(),
             nn.Linear(in_features=256, out_features=128),
@@ -113,7 +115,7 @@ class NCF(pl.LightningModule):
             nn.Linear(in_features=128, out_features=64),
             nn.ReLU(),
             nn.Linear(in_features=64, out_features=5),
-            nn.Dropout(p=hyper_params['dropout'])
+            nn.ReLU()
         )
 
     def training_step(self, batch, batch_idx):
@@ -174,7 +176,7 @@ def main():
               hyper_params['embedding_size'])
 
     trainer = pl.Trainer(gpus=1,
-                         max_epochs=hyper_params['num_epochs'],
+                         max_epochs=(hyper_params['num_epochs'] if not hyper_params['reduce_dataset'] else 1),
                          logger=comet_logger)
 
     trainer.fit(ncf, train_loader, test_loader)
