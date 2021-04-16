@@ -167,7 +167,7 @@ class NCF(pl.LightningModule):
 
         # Train rest of neural network on concatenation of user and movie embeddings
         concat = torch.cat([users_embedding, movies_embedding], dim=1)
-        return self.feed_forward(concat)
+        return torch.squeeze(self.feed_forward(concat))
 
 
 def predict(model, dataloader):
