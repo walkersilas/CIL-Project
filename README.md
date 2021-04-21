@@ -31,3 +31,22 @@ I-AutoRec seems to perform better than U-AutoRec.
 * [Deep Learning Architecture for Collaborative Filtering Recommender Systems](https://www.researchgate.net/publication/340416554_Deep_Learning_Architecture_for_Collaborative_Filtering_Recommender_Systems)
 * [Deep Learning based Recommender System: A Survey and New Perspectives](https://arxiv.org/pdf/1707.07435.pdf)
 * [Neural Graph Collaborative Filtering](https://arxiv.org/pdf/1905.08108.pdf) --> [code](https://github.com/metahexane/ngcf_pytorch_g61/blob/master/ngcf.py) and [medium](https://medium.com/@yusufnoor_88274/implementing-neural-graph-collaborative-filtering-in-pytorch-4d021dff25f3)
+
+# CIL-Roadmap
+
+## 1. (28.04) Test out some other baseline approaches
+### 1.1. Integrate GCF in ```pl.LightningModule```
+### 1.2. Prediction-backward NNs
+### 1.3. Implementation of NCF
+
+## 2. (05.05) Finish baselines
+### 2.1. Try out AEs
+### 2.2. End-to-end implementation of baselines (uniformity in code)
+
+## 3. (12.05) Think about final model
+
+## 4. (19.05) Implement final model 
+### 4.1. AE + NN + GNN
+### 4.2. Augmented with other datasets and/or pretrained models
+
+## 5. (26.05) Implement final model
