@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "advanced-ml"
+name = "cil-project"
 version = "1.0.0"
 description = "Repository for project of Computational Intelligence Lab (263-0008-00L) offered in Spring 2021"
 
