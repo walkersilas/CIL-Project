@@ -136,3 +136,4 @@ pip-selfcheck.json
 ## Custom rules
 !.vscode/settings.json.default
 data/
+logs/
