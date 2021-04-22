@@ -31,7 +31,7 @@ hyper_params = {
     'learning_rate': 1e-3,
     'train_size': 0.9,
     'dropout': 0.5,
-    'reduce_dataset': True,
+    'reduce_dataset': False,
     'train_data_path': '../data/data_train.csv',
     'sample_submission_path': '../data/sampleSubmission.csv',
     'number_of_users': 10000,
