@@ -41,3 +41,12 @@ Autoencoder_05:
 		Linear(#Users), ReLU, Linear(512), ReLU, Linear(256), ReLU
 	Decoder:
 		Linear(encoding_size), ReLU, Linear(256), ReLU, Linear(512), ReLU
+
+
+Autoencoder_06:
+	User-Based Autoencoder
+	encoding_size=256, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Movies), ReLU, Linear(512), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(512), ReLU
