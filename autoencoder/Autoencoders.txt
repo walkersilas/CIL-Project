@@ -1,0 +1,43 @@
+Autoencoder_01:
+	User-Based Autoencoder
+	encoding_size=16, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Movies), ReLU, Linear(1024), ReLU, Linear(512), ReLU, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(32), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(32), ReLU, Linear(64), ReLU, Linear(128), ReLU, Linear(256), ReLU, Linear(512), ReLU, Linear(1024), ReLU
+
+
+Autoencoder_02:
+	User-Based Autoencoder
+	encoding_size=32, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Movies), ReLU, Linear(1024), ReLU, Linear(512), ReLU, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(32), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(32), ReLU, Linear(64), ReLU, Linear(128), ReLU, Linear(256), ReLU, Linear(512), ReLU, Linear(1024), ReLU
+
+
+Autoencoder_03:
+	User-Based Autoencoder
+	encoding_size=64, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Movies), ReLU, Linear(1024), ReLU, Linear(512), ReLU, Linear(256), ReLU, Linear(128), ReLU, Linear(64), ReLU, Linear(32), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(32), ReLU, Linear(64), ReLU, Linear(128), ReLU, Linear(256), ReLU, Linear(512), ReLU, Linear(1024), ReLU
+
+
+Autoencoder_04:
+	User-Based Autoencoder
+	encoding_size=32, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Movies), ReLU, Linear(512), ReLU, Linear(256), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(256), ReLU, Linear(512), ReLU
+
+
+Autoencoder_05:
+	Item-Based Autoencoder
+	encoding_size=32, dropout=0.5, batch_size=1024, num_epochs=25
+	Encoder:
+		Linear(#Users), ReLU, Linear(512), ReLU, Linear(256), ReLU
+	Decoder:
+		Linear(encoding_size), ReLU, Linear(256), ReLU, Linear(512), ReLU
