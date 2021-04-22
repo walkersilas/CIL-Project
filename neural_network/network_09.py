@@ -175,7 +175,7 @@ def main():
               hyper_params['number_of_movies'],
               hyper_params['embedding_size'])
 
-    trainer = pl.Trainer(gpus=1,
+    trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=(hyper_params['num_epochs'] if not hyper_params['reduce_dataset'] else 1),
                          logger=comet_logger)
 
