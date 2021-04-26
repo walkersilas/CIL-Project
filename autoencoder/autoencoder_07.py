@@ -202,7 +202,7 @@ def main():
     train_data, train_mask = get_full_matrices(train_users, train_movies, train_ratings)
     train_data, train_mask = train_data.T, train_mask.T
 
-    all_data_pd, _ = load_data(hyper_params['train_data_path'])
+    all_data_pd, _ = load_data(hyper_params['train_data_path'], True)
     all_users, all_movies, all_ratings = extract_users_items_predictions(all_data_pd)
     all_data, _ = get_full_matrices(all_users, all_movies, all_ratings)
     all_data = all_data.T
