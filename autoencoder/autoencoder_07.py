@@ -26,7 +26,7 @@ comet_api_key = json.load(open(comet_api_key_path))
 
 hyper_params = {
     'batch_size': 1024,
-    'num_epochs': 25,
+    'num_epochs': 100,
     'encoding_size': 256,
     'learning_rate': 1e-3,
     'train_size': 0.9,
@@ -118,6 +118,17 @@ def create_evaluation_dataloader(users, movies):
         batch_size=hyper_params['batch_size']
     )
     return dataloader
+
+
+def predict(model, dataloader):
+    reconstructed_matrix = model.to(device).reconstruct_full_matrix()
+
+    with torch.no_grad():
+        all_predictions = []
+        for users_batch, movies_batch in dataloader:
+            predictions_batch = model.to(device).extract_prediction_from_full_matrix(reconstructed_matrix, users_batch, movies_batch)
+            all_predictions.append(predictions_batch)
+        return torch.cat(all_predictions)
 
 
 class AutoEncoder(pl.LightningModule):
@@ -220,6 +231,23 @@ def main():
                          logger=comet_logger)
 
     trainer.fit(autoencoder, train_loader, test_loader)
+
+    # Make the predictions on the model
+    evaluation_pd, _ = load_data(hyper_params['sample_submission_path'], True)
+    evaluation_users, evaluation_movies, _ = extract_users_items_predictions(evaluation_pd)
+    evaluation_dataloader = create_evaluation_dataloader(evaluation_users, evaluation_movies)
+
+    predictions = predict(autoencoder, evaluation_dataloader)
+
+    predictions_pd = pd.DataFrame(data=predictions.numpy(), columns=['Prediction'])
+    output = pd.concat([evaluation_pd.Id.astype(str), predictions_pd], axis=1)
+
+    print(output.head(5))
+    print()
+    print('Output Shape', output.shape)
+
+    output.to_csv('output.csv', index=False, float_format='%.3f')
+    comet_logger.experiment.log_asset('output.csv')
 
 
 if __name__ == '__main__':
