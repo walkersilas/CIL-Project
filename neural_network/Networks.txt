@@ -90,3 +90,10 @@ Network_12:
 	Network from paper Neural Collaborative Filtering
 
 
+Network_13:
+	user_embedding_size=10000, movie_embedding_size=1000, dropout=0.5, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, BatchNorm, Linear(32), ReLU, Dropout, BatchNorm, Linear(16), ReLU, Linear(8), ReLU, Linear(1), ReLU
+
+	One-hot encoding of input users and movies with embedding layers
+
+
