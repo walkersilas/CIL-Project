@@ -80,3 +80,13 @@ Network_11:
 	Network from paper Neural Collaborative Filtering
 
 
+Network_12:
+	mlp_user_embedding_size=10000, mlp_movie_embedding_size=1000, gmf_embedding_size=1000 dropout=0.5, batch_size=1024, num_epochs=25
+	Dropout, Linear(64), ReLu, Dropout, BatchNorm, Linear(32), ReLU, Dropout, BatchNorm, Linear(16), ReLU, Linear(8), ReLU, Linear(1), ReLU
+	Multiply Layer
+	=> Concatenate output from upper two networks and predict with a Linear Layer	
+
+	One-hot encoding of input users and movies with embedding layers
+	Network from paper Neural Collaborative Filtering
+
+
