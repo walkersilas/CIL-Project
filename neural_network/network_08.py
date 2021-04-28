@@ -83,7 +83,8 @@ def create_dataloader(users, movies, predictions):
 
     dataloader = DataLoader(
         TensorDataset(users_torch, movies_torch, predictions_torch),
-        batch_size=hyper_params['batch_size']
+        batch_size=hyper_params['batch_size'],
+        shuffle=True
     )
 
     return dataloader
