@@ -1,3 +1,4 @@
+from comet_ml import Experiment
 from modules import ncf_baseline
 import numpy as np
 import torch
