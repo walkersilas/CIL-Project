@@ -137,3 +137,7 @@ pip-selfcheck.json
 !.vscode/settings.json.default
 data/
 logs/
+comet.json
+.idea
+init_windows.bat
+cil-project
