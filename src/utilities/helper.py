@@ -62,7 +62,7 @@ def create_argument_parser() -> ArgumentParser:
     parser.add_argument(
         "--dataloader-workers",
         type=int,
-        default=4,
+        default=8,
         help="number of dataloader workers used"
     )
     return parser

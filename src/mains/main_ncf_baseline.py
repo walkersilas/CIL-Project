@@ -35,7 +35,7 @@ def main():
         full_dataset=args.leonhard,
         train_val_split=False
     )
-    train_data, val_data = create_dataset(train_pd), create_dataset(test_pd)
+    train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
     ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args)
