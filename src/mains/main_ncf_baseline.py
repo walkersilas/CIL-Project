@@ -38,7 +38,7 @@ def main():
     train_data, val_data = create_dataset(train_pd), create_dataset(test_pd)
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
-    ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids)
+    ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args)
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=ncf_baseline.hyper_parameters['num_epochs'],
                          logger=comet_logger)
