@@ -22,7 +22,7 @@ hyper_parameters = {
 
 
 class NCF(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, test_ids,
+    def __init__(self, train_data, val_data, test_data, test_ids, args,
                  number_of_users=hyper_parameters['number_of_users'],
                  number_of_movies=hyper_parameters['number_of_movies'],
                  user_embedding_size=hyper_parameters['user_embedding_size'],
@@ -30,6 +30,8 @@ class NCF(pl.LightningModule):
                  dropout=hyper_parameters['dropout']):
 
         super().__init__()
+
+        self.args = args
 
         self.train_data = train_data
         self.val_data = val_data
@@ -121,19 +123,22 @@ class NCF(pl.LightningModule):
         return DataLoader(
             self.train_data,
             batch_size=hyper_parameters['batch_size'],
-            shuffle=True
+            shuffle=True,
+            num_workers=self.args.dataloader_workers
         )
 
     def val_dataloader(self):
         return DataLoader(
             self.val_data,
             batch_size=hyper_parameters['batch_size'],
-            shuffle=False
+            shuffle=False,
+            num_workers=self.args.dataloader_workers
         )
 
     def test_dataloader(self):
         return DataLoader(
             self.test_data,
             batch_size=hyper_parameters['batch_size'],
-            shuffle=False
+            shuffle=False,
+            num_workers=self.args.dataloader_workers
         )

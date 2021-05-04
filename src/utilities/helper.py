@@ -59,6 +59,12 @@ def create_argument_parser() -> ArgumentParser:
         default="./logs",
         help="path to log directory when comet can not be run online"
     )
+    parser.add_argument(
+        "--dataloader-workers",
+        type=int,
+        default=4,
+        help="number of dataloader workers used"
+    )
     return parser
 
 
