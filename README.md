@@ -50,3 +50,9 @@ I-AutoRec seems to perform better than U-AutoRec.
 ### 4.2. Augmented with other datasets and/or pretrained models
 
 ## 5. (26.05) Implement final model
+
+
+# Datasets
+* [MovieLens](https://grouplens.org/datasets/movielens/)
+* [Amazon Review Data](https://nijianmo.github.io/amazon/index.html)
+
