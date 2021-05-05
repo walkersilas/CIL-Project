@@ -35,15 +35,20 @@ I-AutoRec seems to perform better than U-AutoRec.
 # CIL-Roadmap
 
 ## 1. (28.04) Test out some other baseline approaches
-### 1.1. Integrate GCF in ```pl.LightningModule```
-### 1.2. Prediction-backward NNs
-### 1.3. Implementation of NCF
+### 1.1. Integrate GCF in ```pl.LightningModule``` [DONE]
+### 1.2. Prediction-backward NNs [DONE]
+### 1.3. Implementation of NCF [DONE]
 
 ## 2. (05.05) Finish baselines
-### 2.1. Try out AEs
-### 2.2. End-to-end implementation of baselines (uniformity in code)
+### 2.1. Try out AEs [DONE]
+### 2.2. End-to-end implementation of baselines (uniformity in code) [NOT DONE]
 
 ## 3. (12.05) Think about final model
+### 3.1. Integrate GCF in general code framework
+### 3.2. Describe ideas of (concrete) final models
+### 3.3. Try out VAEs (and if time remains try out denoising through AEs)
+### 3.4. Try out bagging of various models
+### 3.5. End-to-end implementation of baselines (uniformity in code)
 
 ## 4. (19.05) Implement final model 
 ### 4.1. AE + NN + GNN
