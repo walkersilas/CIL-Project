@@ -14,6 +14,7 @@ hyper_parameters = {
     'number_of_users': 10000,
     'number_of_movies': 1000,
     'embedding_size': 64,
+    'num_embedding_propagation_layers': 2,
     'learning_rate': 1e-3,
     'train_size': 0.9,
     'patience': 3
@@ -24,7 +25,8 @@ class GNN(pl.LightningModule):
     def __init__(self, train_data, val_data, test_data, test_ids, args, laplacian_matrix,
                  number_of_users=hyper_parameters['number_of_users'],
                  number_of_movies=hyper_parameters['number_of_movies'],
-                 embedding_size=hyper_parameters['embedding_size']):
+                 embedding_size=hyper_parameters['embedding_size'],
+                 num_embedding_propagation_layers=hyper_parameters['num_embedding_propagation_layers']):
 
         super().__init__()
 
@@ -52,14 +54,15 @@ class GNN(pl.LightningModule):
 
         # List of Embedding Propagation Layers
         self.embedding_propagation_layers = torch.nn.ModuleList([
-            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
-            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64)
+            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity,
+                                            in_features=embedding_size, out_features=embedding_size)
+            for i in range(num_embedding_propagation_layers)
         ])
-        num_embedding_propagation_layers = len(self.embedding_propagation_layers)
 
         # Feedforward network used to make predictions from the embedding propaagtiona layers
+        input_size = 2 *  num_embedding_propagation_layers * embedding_size
         self.feed_forward = nn.Sequential(
-            nn.Linear(in_features=64 * num_embedding_propagation_layers * 2, out_features=64),
+            nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
             nn.Linear(in_features=64, out_features=32),
             nn.Linear(in_features=32, out_features=1)
