@@ -53,9 +53,6 @@ class GNN(pl.LightningModule):
         # List of Embedding Propagation Layers
         self.embedding_propagation_layers = torch.nn.ModuleList([
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
-            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
-            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
-            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64)
         ])
         num_embedding_propagation_layers = len(self.embedding_propagation_layers)
@@ -79,11 +76,8 @@ class GNN(pl.LightningModule):
     def forward(self, users, movies):
         current_embedding = self.get_initial_embeddings()
         final_embedding = None
-        #final_embedding = current_embedding.clone()
         for layer in self.embedding_propagation_layers:
             current_embedding = layer(current_embedding, self.device)
-            # TODO: Do we really need to include the first (current) embedding in the final embedding?
-            # final_embedding = torch.cat((final_embedding, current_embedding), dim=1)
             if final_embedding is None:
                 final_embedding = current_embedding
             else:
@@ -181,4 +175,4 @@ class GNN(pl.LightningModule):
             transformed_embedding_1 = self.transformation_layer_1(embedding_1)
             transformed_embedding_2 = self.transformation_layer_2(embedding_2)
 
-            return nn.ReLU()(transformed_embedding_1 + transformed_embedding_2)
+            return nn.LeakyReLU()(transformed_embedding_1 + transformed_embedding_2)
