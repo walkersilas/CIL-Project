@@ -53,6 +53,9 @@ class GNN(pl.LightningModule):
         # List of Embedding Propagation Layers
         self.embedding_propagation_layers = torch.nn.ModuleList([
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
+            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
+            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
+            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64)
         ])
         num_embedding_propagation_layers = len(self.embedding_propagation_layers)
