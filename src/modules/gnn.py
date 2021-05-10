@@ -55,7 +55,7 @@ class GNN(pl.LightningModule):
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64),
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity, in_features=64, out_features=64)
         ])
-        num_embedding_propagation_layers = len(self.embedding_propagation_layers) + 1
+        num_embedding_propagation_layers = len(self.embedding_propagation_layers)
 
         # Feedforward network used to make predictions from the embedding propaagtiona layers
         self.feed_forward = nn.Sequential(
@@ -75,11 +75,16 @@ class GNN(pl.LightningModule):
 
     def forward(self, users, movies):
         current_embedding = self.get_initial_embeddings()
-        final_embedding = current_embedding.clone()
+        final_embedding = None
+        #final_embedding = current_embedding.clone()
         for layer in self.embedding_propagation_layers:
             current_embedding = layer(current_embedding, self.device)
             # TODO: Do we really need to include the first (current) embedding in the final embedding?
-            final_embedding = torch.cat((final_embedding, current_embedding), dim=1)
+            # final_embedding = torch.cat((final_embedding, current_embedding), dim=1)
+            if final_embedding is None:
+                final_embedding = current_embedding
+            else:
+                final_embedding = torch.cat((final_embedding, current_embedding), dim=1)
 
         users_embedding = final_embedding[users]
         movies_embedding = final_embedding[movies + self.number_of_users]
