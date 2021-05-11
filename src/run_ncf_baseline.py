@@ -51,8 +51,8 @@ def main():
                             max_epochs=ncf_baseline.hyper_parameters['num_epochs'],
                             logger=comet_logger)
 
-    trainer.fit(ncf)
-    trainer.test(ncf)
+        trainer.fit(ncf)
+        trainer.test(ncf)
 
 
 if __name__ == "__main__":
