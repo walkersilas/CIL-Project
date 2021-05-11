@@ -16,7 +16,7 @@ def create_argument_parser() -> ArgumentParser:
     parser.add_argument(
         "--data-dir",
         type=str,
-        default="../../data/",
+        default="../data/",
         help="path to the directory containing the unprocessed data"
     )
     parser.add_argument(
@@ -50,7 +50,7 @@ def create_argument_parser() -> ArgumentParser:
     parser.add_argument(
         "--comet-key",
         type=str,
-        default="../../comet.json",
+        default="../comet.json",
         help="path to the comet api key directory"
     )
     parser.add_argument(
@@ -64,6 +64,9 @@ def create_argument_parser() -> ArgumentParser:
         type=int,
         default=8,
         help="number of dataloader workers used"
+    )
+    parser.add_argument(
+        "--bagging", action="store_true", help="use bagging to train multiple models of the same type"
     )
     return parser
 

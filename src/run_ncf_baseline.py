@@ -3,6 +3,7 @@ from modules import ncf_baseline
 import numpy as np
 import torch
 import pytorch_lightning as pl
+from utilities.bagging import predict_with_bagging
 from utilities.helper import (
     create_argument_parser,
     create_comet_logger
@@ -38,10 +39,17 @@ def main():
     train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
-    ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args)
-    trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=ncf_baseline.hyper_parameters['num_epochs'],
-                         logger=comet_logger)
+    if args.bagging:
+        predict_with_bagging(
+            ncf_baseline.NCFSKlearn(val_data, test_data, test_ids, args, comet_logger),
+            train_data,
+            test_data,
+        )
+    else:
+        ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args)
+        trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
+                            max_epochs=ncf_baseline.hyper_parameters['num_epochs'],
+                            logger=comet_logger)
 
     trainer.fit(ncf)
     trainer.test(ncf)

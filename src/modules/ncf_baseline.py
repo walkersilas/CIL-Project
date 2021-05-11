@@ -1,9 +1,13 @@
+from typing import Any, List
 import numpy as np
+from pytorch_lightning.loggers.comet import CometLogger
+from sklearn.base import BaseEstimator
 import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
+from typings import BaseRegressor
 from utilities.evaluation_functions import get_score
 
 
@@ -142,3 +146,39 @@ class NCF(pl.LightningModule):
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )
+
+class NCFSKlearn(BaseRegressor):
+    """The neural network model for neural collaborative filtering."""
+
+    def __init__(self, val_data: np.ndarray, test_data: np.ndarray,
+        test_ids: List[int], args: List[Any], logger: CometLogger) -> None:
+        """Store hyper-params.
+
+        val_data: The data to validate on
+        test_data: The data to test on
+        test_ids: The ids from the test data
+        args: Command line arguments passed to the python script
+        logger: A Comet ML logger instance
+        """
+        super().__init__()
+
+        self.val_data = val_data
+        self.test_data = test_data
+        self.test_ids = test_ids
+        self.args = args
+        self.logger = logger
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
+        """Initialize and train the model.
+
+        Parameters
+        ----------
+        X: The input data to train on
+        y: The corresponding output integer labels
+        """
+        ncf = NCF(X, self.val_data, self.test_data, self.test_ids, self.args)
+        trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
+            max_epochs=hyper_parameters['num_epochs'],
+            logger=self.logger)
+
+        trainer.fit(ncf)
