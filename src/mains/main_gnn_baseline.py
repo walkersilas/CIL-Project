@@ -1,5 +1,5 @@
 from comet_ml import Experiment
-from modules import gnn
+from modules import gnn_baseline
 import numpy as np
 import torch
 import pytorch_lightning as pl
@@ -23,14 +23,14 @@ def main():
     np.random.seed(7)
 
     comet_logger = create_comet_logger(args)
-    comet_logger.log_hyperparams(gnn.hyper_parameters)
+    comet_logger.log_hyperparams(gnn_baseline.hyper_parameters)
 
     train_pd, val_pd = load_data(
         file_path=args.data_dir + args.train_data,
         full_dataset=args.leonhard,
         train_val_split=True,
         random_seed=args.random_seed,
-        train_size=gnn.hyper_parameters['train_size']
+        train_size=gnn_baseline.hyper_parameters['train_size']
     )
     test_pd = load_data(
         file_path=args.data_dir + args.test_data,
@@ -41,17 +41,17 @@ def main():
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
     laplacian_matrix = create_laplacian_matrix(train_pd,
-                            gnn.hyper_parameters['number_of_users'],
-                            gnn.hyper_parameters['number_of_movies']
+                            gnn_baseline.hyper_parameters['number_of_users'],
+                            gnn_baseline.hyper_parameters['number_of_movies']
     )
 
-    graph_neural_network = gnn.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix)
+    graph_neural_network = gnn_baseline.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix)
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=gnn.hyper_parameters['patience']
+        patience=gnn_baseline.hyper_parameters['patience']
     )
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=gnn.hyper_parameters['num_epochs'],
+                         max_epochs=gnn_baseline.hyper_parameters['num_epochs'],
                          logger=comet_logger,
                          callbacks=[early_stopping])
 
