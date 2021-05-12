@@ -35,33 +35,33 @@ I-AutoRec seems to perform better than U-AutoRec.
 # CIL-Roadmap
 
 1. (28.04) Test out some other baseline approaches
-* Integrate GCF in ```pl.LightningModule``` [DONE]
-* Prediction-backward NNs [DONE]
-* Implementation of NCF [DONE]
+ * Integrate GCF in ```pl.LightningModule``` [DONE]
+ * Prediction-backward NNs [DONE]
+ * Implementation of NCF [DONE]
 
 2. (05.05) Finish baselines
-* Try out AEs [DONE]
-* End-to-end implementation of baselines (uniformity in code) [NOT DONE]
+ * Try out AEs [DONE]
+ * End-to-end implementation of baselines (uniformity in code) [NOT DONE]
 
 3. (12.05) Think about final model
-* Integrate GCF in general code framework [DONE]
-* Describe ideas of (concrete) final models
-  *  Input --> (V)AE --*Denoised version of the data*--> GNN: embedding + feed-forward network (NCF) --> Prediction
-  *  Bagging
-  *  Include error in feed-forward network
-* Try out VAEs (and if time remains try out denoising through AEs) [DONE]
-* Try out bagging of various models [DONE]
-* End-to-end implementation of baselines (uniformity in code) [CLOSE]
+ * Integrate GCF in general code framework [DONE]
+ * Describe ideas of (concrete) final models
+   *  Input --> (V)AE --*Denoised version of the data*--> GNN: embedding + feed-forward network (NCF) --> Prediction
+   *  Bagging
+   *  Include error in feed-forward network
+ * Try out VAEs (and if time remains try out denoising through AEs) [DONE]
+ * Try out bagging of various models [DONE]
+ * End-to-end implementation of baselines (uniformity in code) [CLOSE]
 
-4. (19.05) Implement final model 
-* (V)AE + GNN
-* GNN + NCF
-* NCF + Error fed back into
-* NCF full-implementation
-* End-to-end implementation of baselines (uniformity in code)
+4. (19.05) Implement various combinations of baselines 
+ * (V)AE + GNN
+ * GNN + NCF 
+ * NCF + Error fed back into
+ * NCF full-implementation
+ * End-to-end implementation of baselines (uniformity in code)
 
 5. (26.05) Implement final model
-6. () Add pretraining
+6. (02.06) Add pretraining
 
 
 # Datasets
