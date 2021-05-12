@@ -34,12 +34,10 @@ I-AutoRec seems to perform better than U-AutoRec.
 
 # CIL-Roadmap
 
-* 1. (28.04) Test out some other baseline approaches
-** 1.1. Integrate GCF in ```pl.LightningModule``` [DONE]
-
-** 1.2. Prediction-backward NNs [DONE]
-
-** 1.3. Implementation of NCF [DONE]
+1. (28.04) Test out some other baseline approaches
+* Integrate GCF in ```pl.LightningModule``` [DONE]
+* Prediction-backward NNs [DONE]
+* Implementation of NCF [DONE]
 
 ## 2. (05.05) Finish baselines
 ### 2.1. Try out AEs [DONE]
