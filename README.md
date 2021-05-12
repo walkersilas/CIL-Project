@@ -36,7 +36,9 @@ I-AutoRec seems to perform better than U-AutoRec.
 
 * 1. (28.04) Test out some other baseline approaches
 ** 1.1. Integrate GCF in ```pl.LightningModule``` [DONE]
+
 ** 1.2. Prediction-backward NNs [DONE]
+
 ** 1.3. Implementation of NCF [DONE]
 
 ## 2. (05.05) Finish baselines
