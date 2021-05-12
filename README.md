@@ -39,22 +39,29 @@ I-AutoRec seems to perform better than U-AutoRec.
 * Prediction-backward NNs [DONE]
 * Implementation of NCF [DONE]
 
-## 2. (05.05) Finish baselines
-### 2.1. Try out AEs [DONE]
-### 2.2. End-to-end implementation of baselines (uniformity in code) [NOT DONE]
+2. (05.05) Finish baselines
+* Try out AEs [DONE]
+* End-to-end implementation of baselines (uniformity in code) [NOT DONE]
 
-## 3. (12.05) Think about final model
-### 3.1. Integrate GCF in general code framework
-### 3.2. Describe ideas of (concrete) final models
-### 3.3. Try out VAEs (and if time remains try out denoising through AEs)
-### 3.4. Try out bagging of various models
-### 3.5. End-to-end implementation of baselines (uniformity in code)
+3. (12.05) Think about final model
+* Integrate GCF in general code framework [DONE]
+* Describe ideas of (concrete) final models
+  *  Input --> (V)AE --*Denoised version of the data*--> GNN: embedding + feed-forward network (NCF) --> Prediction
+  *  Bagging
+  *  Include error in feed-forward network
+* Try out VAEs (and if time remains try out denoising through AEs) [DONE]
+* Try out bagging of various models [DONE]
+* End-to-end implementation of baselines (uniformity in code) [CLOSE]
 
-## 4. (19.05) Implement final model 
-### 4.1. AE + NN + GNN
-### 4.2. Augmented with other datasets and/or pretrained models
+4. (19.05) Implement final model 
+* (V)AE + GNN
+* GNN + NCF
+* NCF + Error fed back into
+* NCF full-implementation
+* End-to-end implementation of baselines (uniformity in code)
 
-## 5. (26.05) Implement final model
+5. (26.05) Implement final model
+6. () Add pretraining
 
 
 # Datasets
