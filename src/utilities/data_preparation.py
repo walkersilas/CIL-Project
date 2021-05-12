@@ -26,14 +26,38 @@ def __extract_users_items_predictions(data_pd: pd.DataFrame):
     return users, movies, predictions
 
 
-def create_dataset(data_pd: pd.DataFrame, test_dataset: bool = False):
+def __get_tensors_from_dataframe(data_pd: pd.DataFrame):
     users, movies, predictions = __extract_users_items_predictions(data_pd)
     users_torch = torch.tensor(users, dtype=torch.int64)
     movies_torch = torch.tensor(movies, dtype=torch.int64)
     predictions_torch = torch.tensor(predictions, dtype=torch.int64)
+
+    return users_torch, movies_torch, predictions_torch
+
+
+def create_dataset(data_pd: pd.DataFrame, test_dataset: bool = False):
+    users_torch, movies_torch, predictions_torch = __get_tensors_from_dataframe(data_pd)
 
     if not test_dataset:
         return TensorDataset(users_torch, movies_torch, predictions_torch)
     else:
         test_ids = data_pd.Id
         return test_ids, TensorDataset(users_torch, movies_torch)
+
+
+def create_laplacian_matrix(data_pd: pd.DataFrame, number_of_users: int, number_of_movies: int):
+    users_torch, movies_torch, predictions_torch = __get_tensors_from_dataframe(data_pd)
+
+    user_item_matrix = torch.sparse_coo_tensor(torch.vstack((users_torch, movies_torch)), predictions_torch)
+    top_zero_matrix = torch.zeros((user_item_matrix.shape[0], user_item_matrix.shape[0])).to_sparse()
+    bottom_zero_matrix = torch.zeros((user_item_matrix.shape[1], user_item_matrix.shape[1])).to_sparse()
+
+    top_a = torch.cat((top_zero_matrix, user_item_matrix), dim=1)
+    bottom_a = torch.cat((torch.transpose(user_item_matrix, 0, 1), bottom_zero_matrix), dim=1)
+    matrix_a = torch.vstack((top_a, bottom_a))
+
+    degree = (matrix_a.to_dense() > 0).sum(axis=1)
+    degree_matrix = torch.diag(torch.pow(degree, -0.5))
+
+    laplacian_matrix = torch.sparse.mm(degree_matrix, torch.sparse.mm(matrix_a, degree_matrix)).to_sparse()
+    return laplacian_matrix
