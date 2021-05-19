@@ -56,12 +56,24 @@ I-AutoRec seems to perform better than U-AutoRec.
 4. (19.05) Implement various combinations of baselines 
  * (V)AE + GNN
  * GNN + NCF 
- * NCF + Error fed back into
  * NCF full-implementation
  * End-to-end implementation of baselines (uniformity in code)
 
 5. (26.05) Implement final model
+ * Improve NN approaches: Xavier, learning rate schedulers,  
+ * Implement easy baselines: Bayesian SVD++ and ensembling those
+ * Data preprocessing: reduce data size and stack in to GNN + NCF
+ * NCF + Error fed back into
+
 6. (02.06) Add pretraining
+7.
+
+### To-do list:
+1. Easy baselines [Lasse]
+2. Dimensionality reduction [Andras]
+3. NCF with feeback loop [Silas]
+4. NN improvements (and AE if time) [Matteo] 
+5. Code cleanup: Flake8 (Low Priority)
 
 
 # Datasets
