@@ -66,7 +66,6 @@ I-AutoRec seems to perform better than U-AutoRec.
  * NCF + Error fed back into
 
 6. (02.06) Add pretraining
-7.
 
 ### To-do list:
 1. Easy baselines [Lasse]
