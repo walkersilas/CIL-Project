@@ -3,6 +3,10 @@ import pandas as pd
 import torch
 from torch.utils.data import TensorDataset
 from sklearn.model_selection import train_test_split
+from surprise import (
+    Dataset,
+    Reader
+)
 
 
 def load_data(file_path: str, full_dataset: bool, train_val_split: bool, random_seed: int = 0, train_size: float = 0):
@@ -43,6 +47,21 @@ def create_dataset(data_pd: pd.DataFrame, test_dataset: bool = False):
     else:
         test_ids = data_pd.Id
         return test_ids, TensorDataset(users_torch, movies_torch)
+
+
+def create_surprise_data(data_pd: pd.DataFrame, test_dataset: bool = False):
+    users, movies, predictions = __extract_users_items_predictions(data_pd)
+
+    if not test_dataset:
+        df = pd.DataFrame({
+            'users': users,
+            'movies': movies,
+            'predictions': predictions
+        })
+        reader = Reader(rating_scale=(1, 5))
+        return Dataset.load_from_df(df[['users', 'movies', 'predictions']], reader=reader)
+    else:
+        return users, movies, predictions
 
 
 def create_laplacian_matrix(data_pd: pd.DataFrame, number_of_users: int, number_of_movies: int):
