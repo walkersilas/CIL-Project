@@ -15,7 +15,7 @@ hyper_parameters = {
     'number_of_movies': 1000,
     'embedding_size': 64,
     'num_embedding_propagation_layers': 2,
-    'learning_rate': 1e-3,
+    'learning_rate': 5e-4,
     'train_size': 0.9,
     'patience': 3,
     'dropout': 0
