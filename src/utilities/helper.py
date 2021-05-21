@@ -65,6 +65,12 @@ def create_argument_parser() -> ArgumentParser:
         default=8,
         help="number of dataloader workers used"
     )
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=None,
+        help="path to non-default config for testing"
+    )
     return parser
 
 

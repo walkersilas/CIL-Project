@@ -1,4 +1,5 @@
 from comet_ml import Experiment
+import json
 from modules import gnn_baseline
 import numpy as np
 import torch
@@ -18,6 +19,17 @@ from utilities.data_preparation import (
 def main():
     parser = create_argument_parser()
     args = parser.parse_args()
+
+    # Update config with parameters specified in config.json
+    if args.config is not None:
+        try:
+            new_config = json.load(open(args.config))
+
+            for key in new_config.keys():
+                gnn_baseline.hyper_parameters[key] = new_config[key]
+
+        except:
+            print("New config not found ... Continue with default config of model ...")
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
@@ -57,7 +69,6 @@ def main():
 
     trainer.fit(graph_neural_network)
     trainer.test(graph_neural_network)
-
 
 if __name__ == "__main__":
     main()
