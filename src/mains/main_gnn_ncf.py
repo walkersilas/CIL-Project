@@ -19,6 +19,17 @@ def main():
     parser = create_argument_parser()
     args = parser.parse_args()
 
+    # Update config with parameters specified in config.json
+    if args.config is not None:
+        try:
+            new_config = json.load(open(args.config))
+
+            for key in new_config.keys():
+                gnn_ncf.hyper_parameters[key] = new_config[key]
+
+        except:
+            print("New config not found ... Continue with default config of model ...")
+
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
 
