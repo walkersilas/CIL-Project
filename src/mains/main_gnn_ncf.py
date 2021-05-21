@@ -6,7 +6,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from utilities.helper import (
     create_argument_parser,
-    create_comet_logger
+    create_comet_logger,
+    get_config
 )
 from utilities.data_preparation import (
     load_data,
@@ -19,29 +20,20 @@ def main():
     parser = create_argument_parser()
     args = parser.parse_args()
 
-    # Update config with parameters specified in config.json
-    if args.config is not None:
-        try:
-            new_config = json.load(open(args.config))
-
-            for key in new_config.keys():
-                gnn_ncf.hyper_parameters[key] = new_config[key]
-
-        except:
-            print("New config not found ... Continue with default config of model ...")
+    config = get_config(args, gnn_ncf.hyper_parameters)
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
 
     comet_logger = create_comet_logger(args)
-    comet_logger.log_hyperparams(gnn_ncf.hyper_parameters)
+    comet_logger.log_hyperparams(config)
 
     train_pd, val_pd = load_data(
         file_path=args.data_dir + args.train_data,
         full_dataset=args.leonhard,
         train_val_split=True,
         random_seed=args.random_seed,
-        train_size=gnn_ncf.hyper_parameters['train_size']
+        train_size=config['train_size']
     )
     test_pd = load_data(
         file_path=args.data_dir + args.test_data,
@@ -51,18 +43,15 @@ def main():
     train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
-    laplacian_matrix = create_laplacian_matrix(train_pd,
-                            gnn_ncf.hyper_parameters['number_of_users'],
-                            gnn_ncf.hyper_parameters['number_of_movies']
-    )
+    laplacian_matrix = create_laplacian_matrix(train_pd, config['number_of_users'], config['number_of_movies'])
 
-    graph_neural_network = gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix)
+    graph_neural_network = gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
     early_stopping = EarlyStopping(
         monitor='val_loss',
-        patience=gnn_ncf.hyper_parameters['patience']
+        patience=config['patience']
     )
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=gnn_ncf.hyper_parameters['num_epochs'],
+                         max_epochs=config['num_epochs'],
                          logger=comet_logger,
                          callbacks=[early_stopping])
 

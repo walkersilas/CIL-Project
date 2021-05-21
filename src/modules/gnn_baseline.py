@@ -22,15 +22,20 @@ hyper_parameters = {
 
 
 class GNN(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, test_ids, args, laplacian_matrix,
-                 number_of_users=hyper_parameters['number_of_users'],
-                 number_of_movies=hyper_parameters['number_of_movies'],
-                 embedding_size=hyper_parameters['embedding_size'],
-                 num_embedding_propagation_layers=hyper_parameters['num_embedding_propagation_layers']):
+    def __init__(self, train_data, val_data, test_data, test_ids, args, laplacian_matrix, config):
 
         super().__init__()
 
         self.args = args
+
+        # Configuration used for execution
+        self.config = config
+
+        # Parameters of the network
+        self.number_of_users = config['number_of_users']
+        self.number_of_movies = config['number_of_movies']
+        self.embedding_size = config['embedding_size']
+        self.num_embedding_propagation_layers = config['num_embedding_propagation_layers']
 
         self.train_data = train_data
         self.val_data = val_data
@@ -40,27 +45,23 @@ class GNN(pl.LightningModule):
         # Loss function for training and evaluation
         self.loss = nn.MSELoss()
 
-        # Number of users and movies
-        self.number_of_users = number_of_users
-        self.number_of_movies = number_of_movies
-
         # Layers for embedding users and movies
-        self.embedding_users = nn.Embedding(number_of_users, embedding_size)
-        self.embedding_movies = nn.Embedding(number_of_movies, embedding_size)
+        self.embedding_users = nn.Embedding(self.number_of_users, self.embedding_size)
+        self.embedding_movies = nn.Embedding(self.number_of_movies, self.embedding_size)
 
         # Laplacian and Identity Matrices for the Embedding Propagation Layers
         self.laplacian_matrix = laplacian_matrix.to(self.device)
-        self.identity = torch.eye(number_of_users + number_of_movies).to_sparse()
+        self.identity = torch.eye(self.number_of_users + self.number_of_movies).to_sparse()
 
         # List of Embedding Propagation Layers
         self.embedding_propagation_layers = torch.nn.ModuleList([
             self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity,
-                                            in_features=embedding_size, out_features=embedding_size)
-            for i in range(num_embedding_propagation_layers)
+                                            in_features=self.embedding_size, out_features=self.embedding_size)
+            for i in range(self.num_embedding_propagation_layers)
         ])
 
         # Feedforward network used to make predictions from the embedding propaagtiona layers
-        input_size = 2 *  num_embedding_propagation_layers * embedding_size
+        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
             nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
@@ -126,13 +127,13 @@ class GNN(pl.LightningModule):
         )
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=hyper_parameters['learning_rate'])
+        optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])
         return optimizer
 
     def train_dataloader(self):
         return DataLoader(
             self.train_data,
-            batch_size=hyper_parameters['batch_size'],
+            batch_size=self.config['batch_size'],
             shuffle=True,
             num_workers=self.args.dataloader_workers
         )
@@ -140,7 +141,7 @@ class GNN(pl.LightningModule):
     def val_dataloader(self):
         return DataLoader(
             self.val_data,
-            batch_size=hyper_parameters['batch_size'],
+            batch_size=self.config['batch_size'],
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )
@@ -148,7 +149,7 @@ class GNN(pl.LightningModule):
     def test_dataloader(self):
         return DataLoader(
             self.test_data,
-            batch_size=hyper_parameters['batch_size'],
+            batch_size=self.config['batch_size'],
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )
