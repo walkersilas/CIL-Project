@@ -3,6 +3,7 @@ from argparse import (
     ArgumentParser,
     Namespace
 )
+import copy
 import json
 from pytorch_lightning.loggers import CometLogger
 
@@ -65,7 +66,28 @@ def create_argument_parser() -> ArgumentParser:
         default=8,
         help="number of dataloader workers used"
     )
+    parser.add_argument(
+        "--config",
+        type=str,
+        default=None,
+        help="path to non-default config for testing"
+    )
     return parser
+
+
+def get_config(args: Namespace, hyper_parameters):
+    config = copy.deepcopy(hyper_parameters)
+
+    if args.config is not None:
+        try:
+            new_config = json.load(open(args.config))
+
+            for key in new_config.keys():
+                config[key] = new_config[key]
+
+        except:
+            print("New config not found ... Continue with default config of model ...")
+    return config
 
 
 def create_comet_logger(args: Namespace) -> CometLogger:

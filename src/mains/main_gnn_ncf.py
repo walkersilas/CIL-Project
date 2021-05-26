@@ -1,6 +1,5 @@
 from comet_ml import Experiment
-import json
-from modules import gnn_baseline
+from modules import gnn_ncf
 import numpy as np
 import torch
 import pytorch_lightning as pl
@@ -21,7 +20,7 @@ def main():
     parser = create_argument_parser()
     args = parser.parse_args()
 
-    config = get_config(args, gnn_baseline.hyper_parameters)
+    config = get_config(args, gnn_ncf.hyper_parameters)
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
@@ -46,7 +45,7 @@ def main():
 
     laplacian_matrix = create_laplacian_matrix(train_pd, config['number_of_users'], config['number_of_movies'])
 
-    graph_neural_network = gnn_baseline.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
+    graph_neural_network = gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
     early_stopping = EarlyStopping(
         monitor='val_loss',
         patience=config['patience']
@@ -58,6 +57,7 @@ def main():
 
     trainer.fit(graph_neural_network)
     trainer.test(graph_neural_network)
+
 
 if __name__ == "__main__":
     main()

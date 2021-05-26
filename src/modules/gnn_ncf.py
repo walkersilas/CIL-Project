@@ -15,9 +15,10 @@ hyper_parameters = {
     'number_of_movies': 1000,
     'embedding_size': 64,
     'num_embedding_propagation_layers': 2,
-    'learning_rate': 1e-3,
+    'learning_rate': 5e-4,
     'train_size': 0.9,
-    'patience': 3
+    'patience': 3,
+    'dropout': 0
 }
 
 
@@ -36,6 +37,7 @@ class GNN(pl.LightningModule):
         self.number_of_movies = config['number_of_movies']
         self.embedding_size = config['embedding_size']
         self.num_embedding_propagation_layers = config['num_embedding_propagation_layers']
+        self.dropout = config['dropout']
 
         self.train_data = train_data
         self.val_data = val_data
@@ -63,10 +65,19 @@ class GNN(pl.LightningModule):
         # Feedforward network used to make predictions from the embedding propaagtiona layers
         input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
+            nn.Dropout(p=self.dropout),
             nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
+            nn.Dropout(p=self.dropout),
             nn.Linear(in_features=64, out_features=32),
-            nn.Linear(in_features=32, out_features=1)
+            nn.ReLU(),
+            nn.Dropout(p=self.dropout),
+            nn.Linear(in_features=32, out_features=16),
+            nn.ReLU(),
+            nn.Linear(in_features=16, out_features=8),
+            nn.ReLU(),
+            nn.Linear(in_features=8, out_features=1),
+            nn.ReLU()
         )
 
     def get_initial_embeddings(self):
