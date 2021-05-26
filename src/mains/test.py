@@ -52,7 +52,7 @@ def main():
 
     surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
 
-    svd_pp = SVDpp(n_factors=12, lr_all=0.0001, n_epochs=100, reg_all=0.01, verbose=True)
+    svd_pp = SVDpp(n_factors=12, lr_all=0.0001, n_epochs=50, reg_all=0.01, verbose=True)
     svd_pp.fit(surprise_train_data)
 
 
