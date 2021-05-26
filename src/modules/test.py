@@ -60,7 +60,7 @@ class NCF(pl.LightningModule):
         # Neural network used for training on concatenation of users and movies embedding
         self.feed_forward = nn.Sequential(
             nn.Dropout(p=self.dropout),
-            nn.Linear(in_features=self.user_embedding_size + self.movie_embedding_size, out_features=64),
+            nn.Linear(in_features=self.user_embedding_size + self.movie_embedding_size + 1, out_features=64),
             nn.ReLU(),
             nn.Dropout(p=self.dropout),
             nn.Linear(in_features=64, out_features=32),
@@ -74,7 +74,7 @@ class NCF(pl.LightningModule):
             nn.ReLU()
         )
 
-    def forward(self, users, movies):
+    def forward(self, users, movies, reliabilities):
         # Transform users and movies to one-hot encodings
         users_one_hot = self.one_hot_encoding_users(users)
         movies_one_hot = self.one_hot_encoding_movies(movies)
@@ -83,22 +83,25 @@ class NCF(pl.LightningModule):
         users_embedding = self.embedding_layer_users(users_one_hot)
         movies_embedding = self.embedding_layer_movies(movies_one_hot)
 
+        # Add dimension to reliabilities
+        reliabilities = torch.unsqueeze(reliabilities, dim=1)
+
         # Train rest of neural network on concatenation of user and movie embeddings
-        concat = torch.cat([users_embedding, movies_embedding], dim=1)
+        concat = torch.cat([users_embedding, movies_embedding, reliabilities], dim=1)
         return torch.squeeze(self.feed_forward(concat))
 
     def training_step(self, batch, batch_idx):
-        users, movies, ratings = batch
+        users, movies, reliabilities, ratings = batch
 
-        predictions = self(users, movies)
+        predictions = self(users, movies, reliabilities)
         loss = self.loss(predictions, ratings.float())
         self.log('loss', loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        users, movies, ratings = batch
+        users, movies, reliabilities, ratings = batch
 
-        predictions = self(users, movies)
+        predictions = self(users, movies, reliabilities)
         val_loss = self.loss(predictions, ratings.float())
         score = get_score(predictions.cpu().numpy(), ratings.cpu().numpy())
         self.log('val_loss', val_loss)
@@ -106,8 +109,8 @@ class NCF(pl.LightningModule):
         return val_loss
 
     def test_step(self, batch, batch_idx):
-        users, movies = batch
-        predictions = self(users, movies)
+        users, movies, reliabilities = batch
+        predictions = self(users, movies, reliabilities)
         return predictions
 
     def test_epoch_end(self, outputs):

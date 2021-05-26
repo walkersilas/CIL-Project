@@ -6,6 +6,7 @@ from argparse import (
 import copy
 import json
 from pytorch_lightning.loggers import CometLogger
+import torch
 
 
 def create_argument_parser() -> ArgumentParser:
@@ -108,3 +109,12 @@ def create_comet_logger(args: Namespace) -> CometLogger:
             workspace=comet_api_key["workspace"],
             disabled=args.disable_logging
         )
+
+
+def free_gpu_memory(model, trainer):
+    model.cpu()
+    for optimizer_metrics in trainer.optimizers[0].state.values():
+        for metric_name, metric in optimizer_metrics.items():
+            if torch.is_tensor(metric):
+                optimizer_metrics[metric_name] = metric.cpu()
+    torch.cuda.empty_cache()

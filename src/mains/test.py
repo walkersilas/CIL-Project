@@ -9,7 +9,8 @@ import pytorch_lightning as pl
 from utilities.helper import (
     create_argument_parser,
     create_comet_logger,
-    get_config
+    get_config,
+    free_gpu_memory
 )
 from utilities.data_preparation import (
     load_data,
@@ -52,7 +53,7 @@ def main():
 
     surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
 
-    svd_pp = SVDpp(n_factors=12, lr_all=0.0001, n_epochs=50, reg_all=0.01, verbose=True)
+    svd_pp = SVDpp(n_factors=12, lr_all=0.0001, n_epochs=10, reg_all=0.01, verbose=True)
     svd_pp.fit(surprise_train_data)
 
 
@@ -79,20 +80,18 @@ def main():
 
     trainer.fit(reliability_predictor)
     test_reliabilities = trainer.test(reliability_predictor)[0]['predictions']
+    free_gpu_memory(reliability_predictor, trainer)
 
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
 
+    ncf = test.NCF(train_data, val_data, test_data, test_ids, args, config)
 
+    trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
+                         max_epochs=config['num_epochs'],
+                         logger=comet_logger)
 
-
-
-    #ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args, config)
-    #trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-    #                     max_epochs=config['num_epochs'],
-    #                     logger=comet_logger)
-
-    #trainer.fit(ncf)
-    #trainer.test(ncf)
+    trainer.fit(ncf)
+    trainer.test(ncf)
 
 
 if __name__ == "__main__":
