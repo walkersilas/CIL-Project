@@ -22,21 +22,18 @@ hyper_parameters = {
 
 
 class NCF(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, test_ids, args, config):
+    def __init__(self, train_data, val_data, test_data, test_ids, args, svd_pp,
+                 number_of_users=hyper_parameters['number_of_users'],
+                 number_of_movies=hyper_parameters['number_of_movies'],
+                 user_embedding_size=hyper_parameters['user_embedding_size'],
+                 movie_embedding_size=hyper_parameters['movie_embedding_size'],
+                 dropout=hyper_parameters['dropout']):
 
         super().__init__()
 
         self.args = args
 
-        # Configuration used for execution
-        self.config = config
-
-        # Parameters of the network
-        self.number_of_users = config['number_of_users']
-        self.number_of_movies = config['number_of_movies']
-        self.user_embedding_size = config['user_embedding_size']
-        self.movie_embedding_size = config['movie_embedding_size']
-        self.dropout = config['dropout']
+        self.svd_pp = svd_pp
 
         self.train_data = train_data
         self.val_data = val_data
@@ -47,25 +44,25 @@ class NCF(pl.LightningModule):
         self.loss = nn.MSELoss()
 
         # Layer for one-hot encoding of the users
-        self.one_hot_encoding_users = nn.Embedding(self.number_of_users, self.number_of_users)
-        self.one_hot_encoding_users.data = torch.eye(self.number_of_users)
+        self.one_hot_encoding_users = nn.Embedding(number_of_users, number_of_users)
+        self.one_hot_encoding_users.data = torch.eye(number_of_users)
         # Layer for one-hot encoding of the movies
-        self.one_hot_encoding_movies = nn.Embedding(self.number_of_movies, self.number_of_movies)
-        self.one_hot_encoding_movies.data = torch.eye(self.number_of_movies)
+        self.one_hot_encoding_movies = nn.Embedding(number_of_movies, number_of_movies)
+        self.one_hot_encoding_movies.data = torch.eye(number_of_movies)
 
         # Dense layers for getting embedding of users and movies
-        self.embedding_layer_users = nn.Linear(self.number_of_users, self.user_embedding_size)
-        self.embedding_layer_movies = nn.Linear(self.number_of_movies, self.movie_embedding_size)
+        self.embedding_layer_users = nn.Linear(number_of_users, user_embedding_size)
+        self.embedding_layer_movies = nn.Linear(number_of_movies, movie_embedding_size)
 
         # Neural network used for training on concatenation of users and movies embedding
         self.feed_forward = nn.Sequential(
-            nn.Dropout(p=self.dropout),
-            nn.Linear(in_features=self.user_embedding_size + self.movie_embedding_size, out_features=64),
+            nn.Dropout(p=dropout),
+            nn.Linear(in_features=user_embedding_size + movie_embedding_size, out_features=64),
             nn.ReLU(),
-            nn.Dropout(p=self.dropout),
+            nn.Dropout(p=dropout),
             nn.Linear(in_features=64, out_features=32),
             nn.ReLU(),
-            nn.Dropout(p=self.dropout),
+            nn.Dropout(p=dropout),
             nn.Linear(in_features=32, out_features=16),
             nn.ReLU(),
             nn.Linear(in_features=16, out_features=8),
@@ -73,6 +70,9 @@ class NCF(pl.LightningModule):
             nn.Linear(in_features=8, out_features=1),
             nn.ReLU()
         )
+
+        # Combination layer for the two predictions
+        self.combination = nn.Linear(in_features=2, out_features=1)
 
     def forward(self, users, movies):
         # Transform users and movies to one-hot encodings
@@ -84,8 +84,16 @@ class NCF(pl.LightningModule):
         movies_embedding = self.embedding_layer_movies(movies_one_hot)
 
         # Train rest of neural network on concatenation of user and movie embeddings
-        concat = torch.cat([users_embedding, movies_embedding], dim=1)
-        return torch.squeeze(self.feed_forward(concat))
+        embeddings = torch.cat([users_embedding, movies_embedding], dim=1)
+        feed_forward_output = self.feed_forward(embeddings)
+
+        # Prediction from the SVDpp
+        svd_pp_output = torch.tensor(list(map(lambda user, movie : self.svd_pp.predict(user, movie).est, users, movies)), dtype=torch.int64)
+        svd_pp_output = torch.unsqueeze(svd_pp_output, dim=1)
+
+        concat = torch.cat([feed_forward_output, svd_pp_output.to(self.device)], dim=1)
+
+        return torch.squeeze(self.combination(concat))
 
     def training_step(self, batch, batch_idx):
         users, movies, ratings = batch
@@ -121,13 +129,13 @@ class NCF(pl.LightningModule):
         )
 
     def configure_optimizers(self):
-        optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])
+        optimizer = optim.Adam(self.parameters(), lr=hyper_parameters['learning_rate'])
         return optimizer
 
     def train_dataloader(self):
         return DataLoader(
             self.train_data,
-            batch_size=self.config['batch_size'],
+            batch_size=hyper_parameters['batch_size'],
             shuffle=True,
             num_workers=self.args.dataloader_workers
         )
@@ -135,7 +143,7 @@ class NCF(pl.LightningModule):
     def val_dataloader(self):
         return DataLoader(
             self.val_data,
-            batch_size=self.config['batch_size'],
+            batch_size=hyper_parameters['batch_size'],
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )
@@ -143,7 +151,7 @@ class NCF(pl.LightningModule):
     def test_dataloader(self):
         return DataLoader(
             self.test_data,
-            batch_size=self.config['batch_size'],
+            batch_size=hyper_parameters['batch_size'],
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )

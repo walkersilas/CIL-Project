@@ -21,8 +21,8 @@ hyper_parameters = {
 }
 
 
-class NCF(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, test_ids, args, config):
+class RELIABILITY_PREDICTOR(pl.LightningModule):
+    def __init__(self, train_data, val_data, test_data, args, config):
 
         super().__init__()
 
@@ -41,7 +41,6 @@ class NCF(pl.LightningModule):
         self.train_data = train_data
         self.val_data = val_data
         self.test_data = test_data
-        self.test_ids = test_ids.to_numpy()
 
         # Loss function for training and evaluation
         self.loss = nn.MSELoss()
@@ -88,21 +87,21 @@ class NCF(pl.LightningModule):
         return torch.squeeze(self.feed_forward(concat))
 
     def training_step(self, batch, batch_idx):
-        users, movies, ratings = batch
+        users, movies, reliabilities, ratings = batch
 
         predictions = self(users, movies)
-        loss = self.loss(predictions, ratings.float())
-        self.log('loss', loss)
+        loss = self.loss(reliabilities, predictions.float())
+        self.log('reliability_loss', loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
-        users, movies, ratings = batch
+        users, movies, reliabilities, ratings = batch
 
         predictions = self(users, movies)
-        val_loss = self.loss(predictions, ratings.float())
-        score = get_score(predictions.cpu().numpy(), ratings.cpu().numpy())
-        self.log('val_loss', val_loss)
-        self.log('score', score)
+        val_loss = self.loss(predictions, reliabilities.float())
+        score = get_score(predictions.cpu().numpy(), reliabilities.cpu().numpy())
+        self.log('reliablity_val_loss', val_loss)
+        self.log('reliability_score', score)
         return val_loss
 
     def test_step(self, batch, batch_idx):
@@ -112,13 +111,8 @@ class NCF(pl.LightningModule):
 
     def test_epoch_end(self, outputs):
         predictions = torch.cat(outputs, dim=0).cpu()
-        prediction_output = np.stack((self.test_ids, predictions.numpy()), axis=1)
 
-        self.logger.experiment.log_table(
-            filename="predictions.csv",
-            tabular_data=prediction_output,
-            headers=["Id", "Prediction"]
-        )
+        return {'predictions': predictions.numpy()}
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])
