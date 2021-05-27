@@ -14,6 +14,7 @@ from utilities.helper import (
 )
 from utilities.data_preparation import (
     load_data,
+    load_reliabilities,
     create_dataset,
     create_surprise_data,
     create_dataset_with_reliabilities
@@ -35,57 +36,32 @@ def main():
     comet_logger = create_comet_logger(args)
     comet_logger.log_hyperparams(config)
 
-    train_pd, val_pd = load_data(
-        file_path=args.data_dir + args.train_data,
+    train_pd = load_data(
+        file_path="cache/train_data.csv",
         full_dataset=args.leonhard,
-        train_val_split=True,
-        random_seed=args.random_seed,
-        train_size=config['train_size']
+        train_val_split=False
+    )
+    val_pd = load_data(
+        file_path="cache/val_data.csv",
+        full_dataset=args.leonhard,
+        train_val_split=False
     )
     test_pd = load_data(
-        file_path=args.data_dir + args.test_data,
+        file_path="cache/test_data.csv",
         full_dataset=args.leonhard,
         train_val_split=False
     )
 
-    train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
-    test_ids, test_data = create_dataset(test_pd, test_dataset=True)
+    train_raliabilities = load_reliabilities("cache/train_reliabilities.csv")
+    val_reliabilities = load_reliabilities("cache/val_reliabilities.csv")
+    test_reliabilities = load_reliabilities("cache/test_reliabilities.csv")
 
-    surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
-
-    svd_pp = SVDpp(n_factors=12, lr_all=0.0001, n_epochs=10, reg_all=0.01, verbose=True)
-    svd_pp.fit(surprise_train_data)
-
-
-    train_reliabilities = []
-    for user, movie, rating in train_data:
-        prediction = svd_pp.predict(user, movie).est
-        train_reliabilities.append(get_reliability(prediction, rating))
-
-    val_reliabilities = []
-    for user, movie, rating in val_data:
-        prediction = svd_pp.predict(user, movie).est
-        val_reliabilities.append(get_reliability(prediction, rating))
-
-
-    train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
+    train_data = create_dataset_with_reliabilities(train_pd, train_raliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
-
-    reliability_predictor = test_reliability_predictor.RELIABILITY_PREDICTOR(
-        train_data, val_data, test_data, args, config
-    )
-    trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=config['num_epochs'],
-                         logger=comet_logger)
-
-    trainer.fit(reliability_predictor)
-    test_reliabilities = trainer.test(reliability_predictor)[0]['predictions']
-    free_gpu_memory(reliability_predictor, trainer)
-
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
 
     ncf = test.NCF(train_data, val_data, test_data, test_ids, args, config)
-    comet_logger.prefix = ""
+
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=config['num_epochs'],
                          logger=comet_logger)

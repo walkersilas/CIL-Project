@@ -91,7 +91,7 @@ def get_config(args: Namespace, hyper_parameters):
     return config
 
 
-def create_comet_logger(args: Namespace) -> CometLogger:
+def create_comet_logger(args: Namespace, prefix : str = "") -> CometLogger:
     comet_api_key = None
     try:
         comet_api_key = json.load(open(args.comet_key))

@@ -23,6 +23,10 @@ def load_data(file_path: str, full_dataset: bool, train_val_split: bool, random_
     else:
         return data_pd
 
+def load_reliabilities(file_path: str):
+    data_pd = pd.read_csv(file_path)
+    return data_pd.Reliability.values
+
 
 def __extract_users_items_ratings(data_pd: pd.DataFrame):
     users, movies = \
