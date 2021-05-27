@@ -7,20 +7,6 @@ import pytorch_lightning as pl
 from utilities.evaluation_functions import get_score
 
 
-# Hyper Parameters used for the Model
-hyper_parameters = {
-    'batch_size': 1024,
-    'num_epochs': 25,
-    'number_of_users': 10000,
-    'number_of_movies': 1000,
-    'user_embedding_size': 10000,
-    'movie_embedding_size': 1000,
-    'learning_rate': 1e-3,
-    'train_size': 0.9,
-    'dropout': 0.5
-}
-
-
 class RELIABILITY_PREDICTOR(pl.LightningModule):
     def __init__(self, train_data, val_data, test_data, args, config):
 

@@ -107,7 +107,9 @@ def create_comet_logger(args: Namespace) -> CometLogger:
             api_key=comet_api_key["api_key"],
             project_name=comet_api_key["project_name"],
             workspace=comet_api_key["workspace"],
-            disabled=args.disable_logging
+            disabled=args.disable_logging,
+            offline=False,
+            save_dir=args.comet_directory if not args.leonhard else ("/cluster/scratch/" + comet_api_key["workspace"])
         )
 
 
