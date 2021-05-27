@@ -73,11 +73,11 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
         return torch.squeeze(self.feed_forward(concat))
 
     def training_step(self, batch, batch_idx):
-        users, movies, reliabilities, ratings = batch
+        users, movies, reliabilities, _ = batch
 
         predictions = self(users, movies)
         loss = self.loss(reliabilities, predictions.float())
-        self.log('reliability_loss', loss)
+        self.log('loss', loss)
         return loss
 
     def validation_step(self, batch, batch_idx):
@@ -86,8 +86,8 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
         predictions = self(users, movies)
         val_loss = self.loss(predictions, reliabilities.float())
         score = get_score(predictions.cpu().numpy(), reliabilities.cpu().numpy())
-        self.log('reliablity_val_loss', val_loss)
-        self.log('reliability_score', score)
+        self.log('val_loss', val_loss)
+        self.log('score', score)
         return val_loss
 
     def test_step(self, batch, batch_idx):

@@ -85,7 +85,7 @@ def main():
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
 
     ncf = test.NCF(train_data, val_data, test_data, test_ids, args, config)
-
+    comet_logger.prefix = ""
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=config['num_epochs'],
                          logger=comet_logger)
