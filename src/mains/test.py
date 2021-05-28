@@ -61,7 +61,7 @@ def main():
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
 
-    graph_neural_network = gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
+    graph_neural_network = test.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
     early_stopping = EarlyStopping(
         monitor='val_loss',
         patience=config['patience']
