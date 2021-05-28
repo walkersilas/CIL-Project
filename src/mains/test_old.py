@@ -17,8 +17,7 @@ from utilities.data_preparation import (
     load_reliabilities,
     create_dataset,
     create_surprise_data,
-    create_dataset_with_reliabilities,
-    create_laplacian_matrix
+    create_dataset_with_reliabilities
 )
 from utilities.evaluation_functions import get_reliability
 from surprise import SVDpp
@@ -61,18 +60,14 @@ def main():
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
 
-    graph_neural_network = gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
-    early_stopping = EarlyStopping(
-        monitor='val_loss',
-        patience=config['patience']
-    )
+    ncf = test.NCF(train_data, val_data, test_data, test_ids, args, config)
+
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=config['num_epochs'],
-                         logger=comet_logger,
-                         callbacks=[early_stopping])
+                         logger=comet_logger)
 
-    trainer.fit(graph_neural_network)
-    trainer.test(graph_neural_network)
+    trainer.fit(ncf)
+    trainer.test(ncf)
 
 
 if __name__ == "__main__":

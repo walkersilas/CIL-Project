@@ -10,19 +10,20 @@ from utilities.evaluation_functions import get_score
 # Hyper Parameters used for the Model
 hyper_parameters = {
     'batch_size': 1024,
-    'num_epochs': 25,
+    'num_epochs': 60,
     'number_of_users': 10000,
     'number_of_movies': 1000,
-    'user_embedding_size': 10000,
-    'movie_embedding_size': 1000,
-    'learning_rate': 1e-3,
+    'embedding_size': 64,
+    'num_embedding_propagation_layers': 2,
+    'learning_rate': 5e-4,
     'train_size': 0.9,
-    'dropout': 0.5
+    'patience': 3,
+    'dropout': 0
 }
 
 
-class NCF(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, test_ids, args, config):
+class GNN(pl.LightningModule):
+    def __init__(self, train_data, val_data, test_data, test_ids, args, laplacian_matrix, config):
 
         super().__init__()
 
@@ -34,8 +35,8 @@ class NCF(pl.LightningModule):
         # Parameters of the network
         self.number_of_users = config['number_of_users']
         self.number_of_movies = config['number_of_movies']
-        self.user_embedding_size = config['user_embedding_size']
-        self.movie_embedding_size = config['movie_embedding_size']
+        self.embedding_size = config['embedding_size']
+        self.num_embedding_propagation_layers = config['num_embedding_propagation_layers']
         self.dropout = config['dropout']
 
         self.train_data = train_data
@@ -46,21 +47,26 @@ class NCF(pl.LightningModule):
         # Loss function for training and evaluation
         self.loss = nn.MSELoss()
 
-        # Layer for one-hot encoding of the users
-        self.one_hot_encoding_users = nn.Embedding(self.number_of_users, self.number_of_users)
-        self.one_hot_encoding_users.data = torch.eye(self.number_of_users)
-        # Layer for one-hot encoding of the movies
-        self.one_hot_encoding_movies = nn.Embedding(self.number_of_movies, self.number_of_movies)
-        self.one_hot_encoding_movies.data = torch.eye(self.number_of_movies)
+        # Layers for embedding users and movies
+        self.embedding_users = nn.Embedding(self.number_of_users, self.embedding_size)
+        self.embedding_movies = nn.Embedding(self.number_of_movies, self.embedding_size)
 
-        # Dense layers for getting embedding of users and movies
-        self.embedding_layer_users = nn.Linear(self.number_of_users, self.user_embedding_size)
-        self.embedding_layer_movies = nn.Linear(self.number_of_movies, self.movie_embedding_size)
+        # Laplacian and Identity Matrices for the Embedding Propagation Layers
+        self.laplacian_matrix = laplacian_matrix.to(self.device)
+        self.identity = torch.eye(self.number_of_users + self.number_of_movies).to_sparse()
 
-        # Neural network used for training on concatenation of users and movies embedding
+        # List of Embedding Propagation Layers
+        self.embedding_propagation_layers = torch.nn.ModuleList([
+            self.EmbeddingPropagationLayers(self.laplacian_matrix, self.identity,
+                                            in_features=self.embedding_size, out_features=self.embedding_size)
+            for i in range(self.num_embedding_propagation_layers)
+        ])
+
+        # Feedforward network used to make predictions from the embedding propaagtiona layers
+        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size + 1
         self.feed_forward = nn.Sequential(
             nn.Dropout(p=self.dropout),
-            nn.Linear(in_features=self.user_embedding_size + self.movie_embedding_size + 1, out_features=64),
+            nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
             nn.Dropout(p=self.dropout),
             nn.Linear(in_features=64, out_features=32),
@@ -74,20 +80,32 @@ class NCF(pl.LightningModule):
             nn.ReLU()
         )
 
-    def forward(self, users, movies, reliabilities):
-        # Transform users and movies to one-hot encodings
-        users_one_hot = self.one_hot_encoding_users(users)
-        movies_one_hot = self.one_hot_encoding_movies(movies)
+    def get_initial_embeddings(self):
+        users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
+        movies = torch.LongTensor([i for i in range(self.number_of_movies)]).to(self.device)
 
-        # Compute embedding of users and movies
-        users_embedding = self.embedding_layer_users(users_one_hot)
-        movies_embedding = self.embedding_layer_movies(movies_one_hot)
+        users_embedding = self.embedding_users(users)
+        movies_embedding = self.embedding_movies(movies)
+        return torch.cat((users_embedding, movies_embedding), dim=0)
+
+    def forward(self, users, movies, reliabilities):
+        current_embedding = self.get_initial_embeddings()
+        final_embedding = None
+        for layer in self.embedding_propagation_layers:
+            current_embedding = layer(current_embedding, self.device)
+            if final_embedding is None:
+                final_embedding = current_embedding
+            else:
+                final_embedding = torch.cat((final_embedding, current_embedding), dim=1)
+
+        users_embedding = final_embedding[users]
+        movies_embedding = final_embedding[movies + self.number_of_users]
 
         # Add dimension to reliabilities
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
 
-        # Train rest of neural network on concatenation of user and movie embeddings
-        concat = torch.cat([users_embedding, movies_embedding, reliabilities], dim=1)
+        concat = torch.cat((users_embedding, movies_embedding, reliabilities), dim=1)
+
         return torch.squeeze(self.feed_forward(concat))
 
     def training_step(self, batch, batch_idx):
@@ -150,3 +168,30 @@ class NCF(pl.LightningModule):
             shuffle=False,
             num_workers=self.args.dataloader_workers
         )
+
+    # Internal Embedding Propagation Layers for the GNN
+    class EmbeddingPropagationLayers(nn.Module):
+        def __init__(self, laplacian_matrix, identity, in_features, out_features):
+            super().__init__()
+
+            # Laplacian Matrix used in the Embedding Layer
+            self.laplacian_matrix = laplacian_matrix
+
+            # Identity Matrix used in the Embedding Layer
+            self.identity = identity
+
+            # Linear transformation Layers used internally
+            self.transformation_layer_1 = nn.Linear(in_features, out_features)
+            self.transformation_layer_2 = nn.Linear(in_features, out_features)
+
+        def forward(self, previous_embedding, device):
+            self.laplacian_matrix = self.laplacian_matrix.to(device)
+            self.identity = self.identity.to(device)
+
+            embedding_1 = torch.sparse.mm((self.laplacian_matrix + self.identity), previous_embedding)
+            embedding_2 = torch.mul(torch.sparse.mm(self.laplacian_matrix, previous_embedding), previous_embedding)
+
+            transformed_embedding_1 = self.transformation_layer_1(embedding_1)
+            transformed_embedding_2 = self.transformation_layer_2(embedding_2)
+
+            return nn.LeakyReLU()(transformed_embedding_1 + transformed_embedding_2)
