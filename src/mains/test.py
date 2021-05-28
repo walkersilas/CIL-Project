@@ -6,6 +6,7 @@ from modules import (
 import numpy as np
 import torch
 import pytorch_lightning as pl
+from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from utilities.helper import (
     create_argument_parser,
     create_comet_logger,
@@ -60,6 +61,8 @@ def main():
     train_data = create_dataset_with_reliabilities(train_pd, train_raliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)
+
+    laplacian_matrix = create_laplacian_matrix(train_pd, config['number_of_users'], config['number_of_movies'])
 
     graph_neural_network = test.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
     early_stopping = EarlyStopping(
