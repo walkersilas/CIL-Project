@@ -62,6 +62,9 @@ class GNN(pl.LightningModule):
             for i in range(self.num_embedding_propagation_layers)
         ])
 
+        # Layer to rescale reliabilities to interval [0, 1]
+        self.rescale_reliabilities = nn.Sigmoid()
+
         # Feedforward network used to make predictions from the embedding propaagtiona layers
         input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size + 1
         self.feed_forward = nn.Sequential(
@@ -101,10 +104,10 @@ class GNN(pl.LightningModule):
         users_embedding = final_embedding[users]
         movies_embedding = final_embedding[movies + self.number_of_users]
 
-        # Add dimension to reliabilities
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
+        scaled_reliabilities = self.rescale_reliabilities(reliabilities)
 
-        concat = torch.cat([users_embedding, movies_embedding, reliabilities], dim=1)
+        concat = torch.cat([users_embedding, movies_embedding, scaled_reliabilities], dim=1)
 
         return torch.squeeze(self.feed_forward(concat))
 
