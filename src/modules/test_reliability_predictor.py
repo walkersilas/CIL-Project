@@ -23,7 +23,7 @@ hyper_parameters = {
 
 
 class RELIABILITY_PREDICTOR(pl.LightningModule):
-    def __init__(self, train_data, val_data, test_data, args, config):
+    def __init__(self, train_data, val_data, val_data_no_labels, test_data, args, config):
 
         super().__init__()
 
@@ -41,6 +41,7 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
 
         self.train_data = train_data
         self.val_data = val_data
+        self.val_data_no_labels = val_data_no_labels
         self.test_data = test_data
 
         # Loss function for training and evaluation
@@ -105,19 +106,24 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
         self.log('score', score)
         return val_loss
 
-    def test_step(self, batch, batch_idx):
+    def test_step(self, batch, batch_idx, dataloader_idx):
         users, movies = batch
         predictions = self(users, movies)
         return predictions
 
     def test_epoch_end(self, outputs):
-        predictions = torch.cat(outputs, dim=0).cpu()
+        val_predictions = torch.cat(outputs[0], dim=0).cpu()
+        test_predictions = torch.cat(outputs[1], dim=0).cpu()
 
-        reliabilities_output = pd.DataFrame({
-            'Reliability': predictions
+        val_reliabilities = pd.DataFrame({
+            'Reliability': val_predictions
         })
-        reliabilities_output.to_csv('cache/test_reliabilities.csv', index=False)
+        test_reliabilities = pd.DataFrame({
+            'Reliability': test_predictions
+        })
 
+        val_reliabilities.to_csv('cache/val_reliabilities.csv', index=False)
+        test_reliabilities.to_csv('cache/test_reliabilities.csv', index=False)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])
@@ -140,9 +146,18 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
         )
 
     def test_dataloader(self):
-        return DataLoader(
-            self.test_data,
-            batch_size=self.config['batch_size'],
-            shuffle=False,
-            num_workers=self.args.dataloader_workers
-        )
+        return [
+            DataLoader(
+                self.val_data_no_labels,
+                batch_size=self.config['batch_size'],
+                shuffle=False,
+                num_workers=self.args.dataloader_workers
+            ),
+            DataLoader(
+                self.test_data,
+                batch_size=self.config['batch_size'],
+                shuffle=False,
+                num_workers=self.args.dataloader_workers
+            )
+        ]
+

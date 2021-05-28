@@ -56,6 +56,7 @@ def main():
 
     train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
+    _, val_data_no_labels = create_dataset(val_pd, test_dataset=True)
 
     surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
 
@@ -78,17 +79,12 @@ def main():
         prediction = svd_pp.predict(user, movie).est
         val_reliabilities.append(get_reliability(prediction, rating))
 
-    val_reliabilities_pd = pd.DataFrame({
-        "Reliability": val_reliabilities
-    })
-    val_reliabilities_pd.to_csv("cache/val_reliabilities.csv", index=False)
-
-
     train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
 
+
     reliability_predictor = test_reliability_predictor.RELIABILITY_PREDICTOR(
-        train_data, val_data, test_data, args, config
+        train_data, val_data, val_data_no_labels, test_data, args, config
     )
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
                          max_epochs=config['num_epochs'],
