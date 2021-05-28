@@ -10,7 +10,7 @@ from utilities.evaluation_functions import get_score
 # Hyper Parameters used for the Model
 hyper_parameters = {
     'batch_size': 1024,
-    'num_epochs': 60,
+    'num_epochs': 25,
     'number_of_users': 10000,
     'number_of_movies': 1000,
     'embedding_size': 64,
@@ -66,7 +66,7 @@ class GNN(pl.LightningModule):
         self.rescale_reliabilities = nn.Sigmoid()
 
         # Feedforward network used to make predictions from the embedding propaagtiona layers
-        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size + 1
+        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
             nn.Dropout(p=self.dropout),
             nn.Linear(in_features=input_size, out_features=64),
@@ -82,6 +82,9 @@ class GNN(pl.LightningModule):
             nn.Linear(in_features=8, out_features=1),
             nn.ReLU()
         )
+
+        # Combination from output of feed forward and reliability
+        self.combination_layer = nn.Linear(in_features=2, out_features=1)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -107,9 +110,11 @@ class GNN(pl.LightningModule):
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
         scaled_reliabilities = self.rescale_reliabilities(reliabilities)
 
-        concat = torch.cat([users_embedding, movies_embedding, scaled_reliabilities], dim=1)
+        concat = torch.cat([users_embedding, movies_embedding], dim=1)
+        network_output = self.feed_forward(concat)
 
-        return torch.squeeze(self.feed_forward(concat))
+        concat = torch.cat([network_output, scaled_reliabilities], dim=1)
+        return torch.squeeze(self.combination_layer(concat))
 
     def training_step(self, batch, batch_idx):
         users, movies, reliabilities, ratings = batch
