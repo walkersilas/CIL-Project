@@ -67,7 +67,7 @@ def create_surprise_data(train_pd: pd.DataFrame, val_pd:pd.DataFrame):
     return Dataset.load_from_df(df[['users', 'movies', 'ratings']], reader=reader)
 
 
-def create_dataset_with_reliabilities(data_pd: pd.DataFrame, reliabilities: List[float], test_dataset: bool = False):
+def create_dataset_with_reliabilities(data_pd: pd.DataFrame, reliabilities: np.array, test_dataset: bool = False):
     users_torch, movies_torch, ratings_torch = __get_tensors_from_dataframe(data_pd)
     reliabilities_torch = torch.tensor(reliabilities, dtype=torch.float)
 

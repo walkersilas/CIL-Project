@@ -104,7 +104,7 @@ class GNN(pl.LightningModule):
         # Add dimension to reliabilities
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
 
-        concat = torch.cat((users_embedding, movies_embedding, reliabilities), dim=1)
+        concat = torch.cat([users_embedding, movies_embedding, reliabilities], dim=1)
 
         return torch.squeeze(self.feed_forward(concat))
 
