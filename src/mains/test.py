@@ -58,13 +58,6 @@ def main():
     val_reliabilities = load_reliabilities("cache/val_reliabilities.csv")
     test_reliabilities = load_reliabilities("cache/test_reliabilities.csv")
 
-    # Normalize reliabilities
-    mean = np.mean(train_reliabilities)
-    std = np.std(train_reliabilities)
-    train_reliabilities = (train_reliabilities - mean) / std
-    val_reliabilities = (val_reliabilities - mean) / std
-    test_reliabilities = (test_reliabilities - mean) / std
-
     train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
     test_ids, test_data = create_dataset_with_reliabilities(test_pd, test_reliabilities, test_dataset=True)

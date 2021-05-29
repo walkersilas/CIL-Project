@@ -62,9 +62,6 @@ class GNN(pl.LightningModule):
             for i in range(self.num_embedding_propagation_layers)
         ])
 
-        # Layer to rescale reliabilities to interval [0, 1]
-        self.rescale_reliabilities = nn.Sigmoid()
-
         # Feedforward network used to make predictions from the embedding propaagtiona layers
         input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
@@ -108,12 +105,11 @@ class GNN(pl.LightningModule):
         movies_embedding = final_embedding[movies + self.number_of_users]
 
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
-        scaled_reliabilities = self.rescale_reliabilities(reliabilities)
 
         concat = torch.cat([users_embedding, movies_embedding], dim=1)
         network_output = self.feed_forward(concat)
 
-        concat = torch.cat([network_output, scaled_reliabilities], dim=1)
+        concat = torch.cat([network_output, reliabilities], dim=1)
         return torch.squeeze(self.combination_layer(concat))
 
     def training_step(self, batch, batch_idx):
