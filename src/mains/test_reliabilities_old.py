@@ -1,4 +1,5 @@
 from comet_ml import Experiment
+from modules import test_reliability_predictor_old
 import numpy as np
 import pandas as pd
 import os
@@ -21,24 +22,11 @@ from surprise import SVDpp
 from surprise.model_selection import cross_validate
 
 
-hyper_parameters = {
-    'batch_size': 1024,
-    'num_epochs': 25,
-    'number_of_users': 10000,
-    'number_of_movies': 1000,
-    'user_embedding_size': 10000,
-    'movie_embedding_size': 1000,
-    'learning_rate': 1e-3,
-    'train_size': 0.9,
-    'dropout': 0.5
-}
-
-
 def main():
     parser = create_argument_parser()
     args = parser.parse_args()
 
-    config = get_config(args, hyper_parameters)
+    config = get_config(args, test_reliability_predictor_old.hyper_parameters)
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
@@ -79,7 +67,7 @@ def main():
     train_reliabilities = []
     for user, movie, rating in train_data:
         prediction = svd_pp.predict(user, movie).est
-        train_reliabilities.append(prediction)
+        train_reliabilities.append(get_reliability(prediction, rating))
 
     train_reliabilities_pd = pd.DataFrame({
         "Reliability": train_reliabilities
@@ -89,22 +77,21 @@ def main():
     val_reliabilities = []
     for user, movie, rating in val_data:
         prediction = svd_pp.predict(user, movie).est
-        val_reliabilities.append(prediction)
+        val_reliabilities.append(get_reliability(prediction, rating))
 
-    val_reliabilities_pd = pd.DataFrame({
-        "Reliability": val_reliabilities
-    })
-    val_reliabilities_pd.to_csv("cache/val_reliabilities.csv", index=False)
+    train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
+    val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
 
-    test_reliabilities = []
-    for user, movie in test_data:
-        prediction = svd_pp.predict(user, movie).est
-        test_reliabilities.append(prediction)
 
-    test_reliabilities_pd = pd.DataFrame({
-        "Reliability": test_reliabilities
-    })
-    test_reliabilities_pd.to_csv("cache/test_reliabilities.csv", index=False)
+    reliability_predictor = test_reliability_predictor_old.RELIABILITY_PREDICTOR(
+        train_data, val_data, val_data_no_labels, test_data, args, config
+    )
+    trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
+                         max_epochs=config['num_epochs'],
+                         logger=comet_logger)
+
+    trainer.fit(reliability_predictor)
+    trainer.test(reliability_predictor)
 
 
 if __name__ == "__main__":
