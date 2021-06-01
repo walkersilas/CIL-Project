@@ -46,12 +46,12 @@ def main():
         full_dataset=args.leonhard,
         train_val_split=False
     )
-    if not os.path.exists("cache"):
-        os.mkdir("cache")
+    if not os.path.exists("cache_old"):
+        os.mkdir("cache_old")
 
-    train_pd.to_csv("cache/train_data.csv", index=False)
-    val_pd.to_csv("cache/val_data.csv", index=False)
-    test_pd.to_csv("cache/test_data.csv", index=False)
+    train_pd.to_csv("cache_old/train_data.csv", index=False)
+    val_pd.to_csv("cache_old/val_data.csv", index=False)
+    test_pd.to_csv("cache_old/test_data.csv", index=False)
 
 
     train_data, val_data = create_dataset(train_pd), create_dataset(val_pd)
@@ -66,17 +66,17 @@ def main():
 
     train_reliabilities = []
     for user, movie, rating in train_data:
-        prediction = svd_pp.predict(user, movie).est
+        prediction = svd_pp.predict(user.item(), movie.item()).est
         train_reliabilities.append(get_reliability(prediction, rating))
 
     train_reliabilities_pd = pd.DataFrame({
         "Reliability": train_reliabilities
     })
-    train_reliabilities_pd.to_csv("cache/train_reliabilities.csv", index=False)
+    train_reliabilities_pd.to_csv("cache_old/train_reliabilities.csv", index=False)
 
     val_reliabilities = []
     for user, movie, rating in val_data:
-        prediction = svd_pp.predict(user, movie).est
+        prediction = svd_pp.predict(user.item(), movie.item()).est
         val_reliabilities.append(get_reliability(prediction, rating))
 
     train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)

@@ -78,7 +78,7 @@ def main():
 
     train_reliabilities = []
     for user, movie, rating in train_data:
-        prediction = svd_pp.predict(user, movie).est
+        prediction = svd_pp.predict(user.item(), movie.item()).est
         train_reliabilities.append(prediction)
 
     train_reliabilities_pd = pd.DataFrame({
@@ -88,7 +88,7 @@ def main():
 
     val_reliabilities = []
     for user, movie, rating in val_data:
-        prediction = svd_pp.predict(user, movie).est
+        prediction = svd_pp.predict(user.item(), movie.item()).est
         val_reliabilities.append(prediction)
 
     val_reliabilities_pd = pd.DataFrame({
@@ -98,7 +98,7 @@ def main():
 
     test_reliabilities = []
     for user, movie in test_data:
-        prediction = svd_pp.predict(user, movie).est
+        prediction = svd_pp.predict(user.item(), movie.item()).est
         test_reliabilities.append(prediction)
 
     test_reliabilities_pd = pd.DataFrame({

@@ -122,8 +122,8 @@ class RELIABILITY_PREDICTOR(pl.LightningModule):
             'Reliability': test_predictions
         })
 
-        val_reliabilities.to_csv('cache/val_reliabilities.csv', index=False)
-        test_reliabilities.to_csv('cache/test_reliabilities.csv', index=False)
+        val_reliabilities.to_csv('cache_old/val_reliabilities.csv', index=False)
+        test_reliabilities.to_csv('cache_old/test_reliabilities.csv', index=False)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])

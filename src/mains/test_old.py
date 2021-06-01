@@ -39,24 +39,24 @@ def main():
     comet_logger.log_hyperparams(config)
 
     train_pd = load_data(
-        file_path="cache/train_data.csv",
+        file_path="cache_old/train_data.csv",
         full_dataset=args.leonhard,
         train_val_split=False
     )
     val_pd = load_data(
-        file_path="cache/val_data.csv",
+        file_path="cache_old/val_data.csv",
         full_dataset=args.leonhard,
         train_val_split=False
     )
     test_pd = load_data(
-        file_path="cache/test_data.csv",
+        file_path="cache_old/test_data.csv",
         full_dataset=args.leonhard,
         train_val_split=False
     )
 
-    train_reliabilities = load_reliabilities("cache/train_reliabilities.csv")
-    val_reliabilities = load_reliabilities("cache/val_reliabilities.csv")
-    test_reliabilities = load_reliabilities("cache/test_reliabilities.csv")
+    train_reliabilities = load_reliabilities("cache_old/train_reliabilities.csv")
+    val_reliabilities = load_reliabilities("cache_old/val_reliabilities.csv")
+    test_reliabilities = load_reliabilities("cache_old/test_reliabilities.csv")
 
     train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)
