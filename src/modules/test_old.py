@@ -10,14 +10,14 @@ from utilities.evaluation_functions import get_score
 # Hyper Parameters used for the Model
 hyper_parameters = {
     'batch_size': 1024,
-    'num_epochs': 25,
+    'num_epochs': 50,
     'number_of_users': 10000,
     'number_of_movies': 1000,
     'embedding_size': 64,
     'num_embedding_propagation_layers': 2,
     'learning_rate': 5e-4,
     'train_size': 0.9,
-    'patience': 3,
+    'patience': 10,
     'dropout': 0
 }
 
