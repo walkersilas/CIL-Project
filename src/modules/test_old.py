@@ -65,13 +65,10 @@ class GNN(pl.LightningModule):
         # Feedforward network used to make predictions from the embedding propaagtiona layers
         input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
-            nn.Dropout(p=self.dropout),
             nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
-            nn.Dropout(p=self.dropout),
             nn.Linear(in_features=64, out_features=32),
             nn.ReLU(),
-            nn.Dropout(p=self.dropout),
             nn.Linear(in_features=32, out_features=16),
             nn.ReLU(),
             nn.Linear(in_features=16, out_features=8),
@@ -105,6 +102,7 @@ class GNN(pl.LightningModule):
         movies_embedding = final_embedding[movies + self.number_of_users]
 
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
+        reliabilities = nn.Dropout(p=self.dropout)(reliabilities)
 
         concat = torch.cat([users_embedding, movies_embedding], dim=1)
         network_output = self.feed_forward(concat)
