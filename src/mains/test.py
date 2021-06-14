@@ -54,9 +54,17 @@ def main():
         train_val_split=False
     )
 
-    train_reliabilities = load_reliabilities("cache/train_reliabilities.csv")
-    val_reliabilities = load_reliabilities("cache/val_reliabilities.csv")
-    test_reliabilities = load_reliabilities("cache/test_reliabilities.csv")
+    train_reliabilities_nmf = load_reliabilities("nmf_cache/train_reliabilities.csv")
+    val_reliabilities_nmf = load_reliabilities("nmf_cache/val_reliabilities.csv")
+    test_reliabilities_nmf = load_reliabilities("nmf_cache/test_reliabilities.csv")
+
+    train_reliabilities_svd = load_reliabilities("svd_cache/train_reliabilities.csv")
+    val_reliabilities_svd = load_reliabilities("svd_cache/val_reliabilities.csv")
+    test_reliabilities_svd = load_reliabilities("svd_cache/test_reliabilities.csv")
+
+    train_reliabilities = np.stack((train_reliabilities_nmf, train_reliabilities_svd), axis=1)
+    val_reliabilities = np.stack((val_reliabilities_nmf, val_reliabilities_svd), axis=1)
+    test_reliabilities = np.stack((test_reliabilities_nmf, test_reliabilities_svd), axis=1)
 
     train_data = create_dataset_with_reliabilities(train_pd, train_reliabilities)
     val_data = create_dataset_with_reliabilities(val_pd, val_reliabilities)

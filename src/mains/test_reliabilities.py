@@ -18,7 +18,10 @@ from utilities.data_preparation import (
     create_dataset_with_reliabilities
 )
 from utilities.evaluation_functions import get_reliability
-from surprise import KNNBaseline
+from surprise import (
+    NMF,
+    SVD
+)
 from surprise.model_selection import cross_validate
 
 
@@ -73,40 +76,93 @@ def main():
 
     surprise_train_data = create_surprise_data_without_val(train_pd).build_full_trainset()
 
-    knn = KNNBaseline(k=99, min_k=11, sim_options={"name": "pearson_baseline", "user_based": False}, bsl_options={"method": "als"})
+    nmf = NMF(
+        biased=True,
+        n_factors=11,
+        n_epochs=76,
+        init_low=0,
+        init_high=1
+    )
+    nmf.fit(surprise_train_data)
 
-    knn.fit(surprise_train_data)
 
+    if not os.path.exists("nmf_cache"):
+        os.mkdir("nmf_cache")
 
     train_reliabilities = []
     for user, movie, rating in train_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         train_reliabilities.append(prediction)
 
     train_reliabilities_pd = pd.DataFrame({
         "Reliability": train_reliabilities
     })
-    train_reliabilities_pd.to_csv("cache/train_reliabilities.csv", index=False)
+    train_reliabilities_pd.to_csv("nmf_cache/train_reliabilities.csv", index=False)
 
     val_reliabilities = []
     for user, movie, rating in val_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         val_reliabilities.append(prediction)
 
     val_reliabilities_pd = pd.DataFrame({
         "Reliability": val_reliabilities
     })
-    val_reliabilities_pd.to_csv("cache/val_reliabilities.csv", index=False)
+    val_reliabilities_pd.to_csv("nmf_cache/val_reliabilities.csv", index=False)
 
     test_reliabilities = []
     for user, movie in test_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         test_reliabilities.append(prediction)
 
     test_reliabilities_pd = pd.DataFrame({
         "Reliability": test_reliabilities
     })
-    test_reliabilities_pd.to_csv("cache/test_reliabilities.csv", index=False)
+    test_reliabilities_pd.to_csv("nmf_cache/test_reliabilities.csv", index=False)
+
+
+    svd = SVD(
+        biased=False,
+        n_factors=30,
+        n_epochs=14,
+        init_mean=0,
+        init_std_dev=0.052150520280646796,
+        lr_all=0.00202934716100709,
+        reg_all=0.014927795931791398
+    )
+    svd.fit(surprise_train_data)
+
+    if not os.path.exists("svd_cache"):
+        os.mkdir("svd_cache")
+
+    train_reliabilities = []
+    for user, movie, rating in train_data:
+        prediction = svd.predict(user.item(), movie.item()).est
+        train_reliabilities.append(prediction)
+
+    train_reliabilities_pd = pd.DataFrame({
+        "Reliability": train_reliabilities
+    })
+    train_reliabilities_pd.to_csv("svd_cache/train_reliabilities.csv", index=False)
+
+    val_reliabilities = []
+    for user, movie, rating in val_data:
+        prediction = svd.predict(user.item(), movie.item()).est
+        val_reliabilities.append(prediction)
+
+    val_reliabilities_pd = pd.DataFrame({
+        "Reliability": val_reliabilities
+    })
+    val_reliabilities_pd.to_csv("svd_cache/val_reliabilities.csv", index=False)
+
+    test_reliabilities = []
+    for user, movie in test_data:
+        prediction = svd.predict(user.item(), movie.item()).est
+        test_reliabilities.append(prediction)
+
+    test_reliabilities_pd = pd.DataFrame({
+        "Reliability": test_reliabilities
+    })
+    test_reliabilities_pd.to_csv("svd_cache/test_reliabilities.csv", index=False)
 
 
 if __name__ == "__main__":
