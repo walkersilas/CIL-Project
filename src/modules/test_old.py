@@ -63,7 +63,7 @@ class GNN(pl.LightningModule):
         ])
 
         # Feedforward network used to make predictions from the embedding propaagtiona layers
-        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size
+        input_size = 2 *  self.num_embedding_propagation_layers * self.embedding_size + 1
         self.feed_forward = nn.Sequential(
             nn.Linear(in_features=input_size, out_features=64),
             nn.ReLU(),
@@ -76,9 +76,6 @@ class GNN(pl.LightningModule):
             nn.Linear(in_features=8, out_features=1),
             nn.ReLU()
         )
-
-        # Combination from output of feed forward and reliability
-        self.combination_layer = nn.Linear(in_features=2, out_features=1)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -102,13 +99,9 @@ class GNN(pl.LightningModule):
         movies_embedding = final_embedding[movies + self.number_of_users]
 
         reliabilities = torch.unsqueeze(reliabilities, dim=1)
-        reliabilities = nn.Dropout(p=self.dropout)(reliabilities)
 
-        concat = torch.cat([users_embedding, movies_embedding], dim=1)
-        network_output = self.feed_forward(concat)
-
-        concat = torch.cat([network_output, reliabilities], dim=1)
-        return torch.squeeze(self.combination_layer(concat))
+        concat = torch.cat([users_embedding, movies_embedding, reliabilities], dim=1)
+        return torch.squeeze(self.feed_forward(concat))
 
     def training_step(self, batch, batch_idx):
         users, movies, reliabilities, ratings = batch
