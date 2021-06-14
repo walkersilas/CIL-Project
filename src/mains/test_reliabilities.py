@@ -18,7 +18,7 @@ from utilities.data_preparation import (
     create_dataset_with_reliabilities
 )
 from utilities.evaluation_functions import get_reliability
-from surprise import KNNBaseline
+from surprise import SVD
 from surprise.model_selection import cross_validate
 
 
@@ -71,15 +71,24 @@ def main():
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
     _, val_data_no_labels = create_dataset(val_pd, test_dataset=True)
 
-    surprise_train_data = create_surprise_data_without_val(train_pd).build_full_trainset()
+    surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
 
-    knn = KNNBaseline(k=99, min_k=11, sim_options={"name": "pearson_baseline", "user_based": False}, bsl_options={"method": "als"})
-    knn.fit(surprise_train_data)
+    svd = SVD(
+        biased=True,
+        n_factors=353,
+        n_epochs=30,
+        init_mean=0,
+        init_std_dev=0.022305064298367226,
+        lr_all=0.00990031182221595,
+        reg_all=0.059442893641155
+    )
+
+    svd.fit(surprise_train_data)
 
 
     train_reliabilities = []
     for user, movie, rating in train_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = svd.predict(user.item(), movie.item()).est
         train_reliabilities.append(prediction)
 
     train_reliabilities_pd = pd.DataFrame({
@@ -89,7 +98,7 @@ def main():
 
     val_reliabilities = []
     for user, movie, rating in val_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = svd.predict(user.item(), movie.item()).est
         val_reliabilities.append(prediction)
 
     val_reliabilities_pd = pd.DataFrame({
@@ -99,7 +108,7 @@ def main():
 
     test_reliabilities = []
     for user, movie in test_data:
-        prediction = knn.predict(user.item(), movie.item()).est
+        prediction = svd.predict(user.item(), movie.item()).est
         test_reliabilities.append(prediction)
 
     test_reliabilities_pd = pd.DataFrame({
