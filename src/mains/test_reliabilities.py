@@ -71,7 +71,7 @@ def main():
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
     _, val_data_no_labels = create_dataset(val_pd, test_dataset=True)
 
-    surprise_train_data = create_surprise_data(train_pd, val_pd).build_full_trainset()
+    surprise_train_data = create_surprise_data_without_val(train_pd).build_full_trainset()
 
     svd = SVD(
         biased=True,
