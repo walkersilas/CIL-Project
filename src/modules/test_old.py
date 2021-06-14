@@ -77,8 +77,15 @@ class GNN(pl.LightningModule):
             nn.ReLU()
         )
 
-        # Combination from output of feed forward and reliability
-        self.combination_layer = nn.Linear(in_features=3, out_features=1)
+        # Combination of Reliabilities to one output
+        self.combination_layer = nn.Sequential(
+            nn.Linear(in_features=2, out_features=1),
+            nn.Dropout(p=self.dropout),
+            nn.ReLU()
+        )
+
+        # Combination from output of feed forward and reliability to predict some value
+        self.prediction_layer = nn.Linear(in_features=2, out_features=1)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -101,14 +108,13 @@ class GNN(pl.LightningModule):
         users_embedding = final_embedding[users]
         movies_embedding = final_embedding[movies + self.number_of_users]
 
-        #reliabilities = torch.unsqueeze(reliabilities, dim=1)
-        reliabilities = nn.Dropout(p=self.dropout)(reliabilities)
+        combined_reliabilities = self.combination_layer(reliabilities)
 
         concat = torch.cat([users_embedding, movies_embedding], dim=1)
         network_output = self.feed_forward(concat)
 
-        concat = torch.cat([network_output, reliabilities], dim=1)
-        return torch.squeeze(self.combination_layer(concat))
+        concat = torch.cat([network_output, combined_reliabilities], dim=1)
+        return torch.squeeze(self.prediction_layer(concat))
 
     def training_step(self, batch, batch_idx):
         users, movies, reliabilities, ratings = batch
