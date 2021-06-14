@@ -18,7 +18,7 @@ from utilities.data_preparation import (
     create_dataset_with_reliabilities
 )
 from utilities.evaluation_functions import get_reliability
-from surprise import SVD
+from surprise import NMF
 from surprise.model_selection import cross_validate
 
 
@@ -73,22 +73,20 @@ def main():
 
     surprise_train_data = create_surprise_data_without_val(train_pd).build_full_trainset()
 
-    svd = SVD(
-        biased=False,
-        n_factors=30,
-        n_epochs=14,
-        init_mean=0,
-        init_std_dev=0.052150520280646796,
-        lr_all=0.00202934716100709,
-        reg_all=0.014927795931791398
+    nmf = NMF(
+        biased=True,
+        n_factors=11,
+        n_epochs=76,
+        init_low=0,
+        init_high=1
     )
 
-    svd.fit(surprise_train_data)
+    nmf.fit(surprise_train_data)
 
 
     train_reliabilities = []
     for user, movie, rating in train_data:
-        prediction = svd.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         train_reliabilities.append(prediction)
 
     train_reliabilities_pd = pd.DataFrame({
@@ -98,7 +96,7 @@ def main():
 
     val_reliabilities = []
     for user, movie, rating in val_data:
-        prediction = svd.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         val_reliabilities.append(prediction)
 
     val_reliabilities_pd = pd.DataFrame({
@@ -108,7 +106,7 @@ def main():
 
     test_reliabilities = []
     for user, movie in test_data:
-        prediction = svd.predict(user.item(), movie.item()).est
+        prediction = nmf.predict(user.item(), movie.item()).est
         test_reliabilities.append(prediction)
 
     test_reliabilities_pd = pd.DataFrame({
