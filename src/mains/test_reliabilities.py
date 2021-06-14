@@ -74,13 +74,13 @@ def main():
     surprise_train_data = create_surprise_data_without_val(train_pd).build_full_trainset()
 
     svd = SVD(
-        biased=True,
-        n_factors=353,
-        n_epochs=30,
+        biased=False,
+        n_factors=30,
+        n_epochs=14,
         init_mean=0,
-        init_std_dev=0.022305064298367226,
-        lr_all=0.00990031182221595,
-        reg_all=0.059442893641155
+        init_std_dev=0.052150520280646796,
+        lr_all=0.00202934716100709,
+        reg_all=0.014927795931791398
     )
 
     svd.fit(surprise_train_data)
