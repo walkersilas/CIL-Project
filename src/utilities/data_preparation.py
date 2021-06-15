@@ -26,6 +26,11 @@ def load_data(file_path: str,
         return data_pd
 
 
+def load_reinforcements(file_path: str):
+    data_pd = pd.read_csv(file_path)
+    return data_pd.Reinforcement.values
+
+
 def __extract_users_items_predictions(data_pd: pd.DataFrame):
     users, movies = \
         [np.squeeze(arr) for arr in np.split(data_pd.Id.str.extract('r(\d+)_c(\d+)').values.astype(int) - 1, 2, axis=-1)]
@@ -51,6 +56,17 @@ def create_dataset(data_pd: pd.DataFrame, test_dataset: bool = False):
     else:
         test_ids = data_pd.Id
         return test_ids, TensorDataset(users_torch, movies_torch)
+
+
+def create_dataset_with_reinforcements(data_pd: pd.DataFrame, reinforcements: np.array, test_dataset: bool = False):
+    users_torch, movies_torch, ratings_torch = __get_tensors_from_dataframe(data_pd)
+    reinforcements_torch = torch.tensor(reinforcements, dtype=torch.float)
+
+    if not test_dataset:
+        return TensorDataset(users_torch, movies_torch, reinforcements_torch, ratings_torch)
+    else:
+        test_ids = data_pd.Id
+        return test_ids, TensorDataset(users_torch, movies_torch, reinforcements_torch)
 
 
 def create_laplacian_matrix(data_pd: pd.DataFrame, number_of_users: int,
