@@ -38,7 +38,8 @@ class SVDBiased():
                                  init_mean=self.init_mean,
                                  init_std_dev=self.init_std_dev,
                                  lr_all=self.lr_all,
-                                 reg_all=self.reg_all)
+                                 reg_all=self.reg_all,
+                                 random_state=7)
 
     def fit(self):
         self.algo.fit(self.train_data)

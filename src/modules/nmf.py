@@ -34,7 +34,8 @@ class NMF():
                                  n_factors=self.n_factors,
                                  n_epochs=self.n_epochs,
                                  init_low=self.init_low,
-                                 init_high=self.init_high)
+                                 init_high=self.init_high,
+                                 random_state=7)
 
     def fit(self):
         self.algo.fit(self.train_data)
