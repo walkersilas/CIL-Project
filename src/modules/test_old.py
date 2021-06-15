@@ -79,8 +79,9 @@ class GNN(pl.LightningModule):
 
         # Combination of Reliabilities to one output
         self.combination_layer = nn.Sequential(
-            nn.Linear(in_features=2, out_features=1),
-            nn.Dropout(p=self.dropout)
+            nn.Linear(in_features=2, out_features=2),
+            nn.ReLU(),
+            nn.Linear(in_features=2, out_features=1)
         )
 
         # Combination from output of feed forward and reliability to predict some value
@@ -113,6 +114,7 @@ class GNN(pl.LightningModule):
         network_output = self.feed_forward(concat)
 
         concat = torch.cat([network_output, combined_reliabilities], dim=1)
+
         return torch.squeeze(self.prediction_layer(concat))
 
     def training_step(self, batch, batch_idx):
