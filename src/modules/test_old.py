@@ -80,8 +80,7 @@ class GNN(pl.LightningModule):
         # Combination of Reliabilities to one output
         self.combination_layer = nn.Sequential(
             nn.Linear(in_features=2, out_features=1),
-            nn.Dropout(p=self.dropout),
-            nn.ReLU()
+            nn.Dropout(p=self.dropout)
         )
 
         # Combination from output of feed forward and reliability to predict some value
