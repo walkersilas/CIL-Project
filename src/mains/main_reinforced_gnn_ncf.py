@@ -57,7 +57,7 @@ def main():
 
     laplacian_matrix = create_laplacian_matrix(train_pd, config['number_of_users'], config['number_of_movies'])
 
-    graph_neural_network = test_old.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
+    graph_neural_network = reinforced_gnn_ncf.GNN(train_data, val_data, test_data, test_ids, args, laplacian_matrix, config)
     early_stopping = EarlyStopping(
         monitor='val_loss',
         patience=config['patience']
