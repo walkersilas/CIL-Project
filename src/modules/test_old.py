@@ -77,15 +77,8 @@ class GNN(pl.LightningModule):
             nn.ReLU()
         )
 
-        # Combination of Reliabilities to one output
-        self.combination_layer = nn.Sequential(
-            nn.Linear(in_features=2, out_features=2),
-            nn.ReLU(),
-            nn.Linear(in_features=2, out_features=1)
-        )
-
         # Combination from output of feed forward and reliability to predict some value
-        self.prediction_layer = nn.Linear(in_features=2, out_features=1)
+        self.prediction_layer = nn.Linear(in_features=3, out_features=1)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -108,12 +101,10 @@ class GNN(pl.LightningModule):
         users_embedding = final_embedding[users]
         movies_embedding = final_embedding[movies + self.number_of_users]
 
-        combined_reliabilities = self.combination_layer(reliabilities)
-
         concat = torch.cat([users_embedding, movies_embedding], dim=1)
         network_output = self.feed_forward(concat)
 
-        concat = torch.cat([network_output, combined_reliabilities], dim=1)
+        concat = torch.cat([network_output, reliabilities], dim=1)
 
         return torch.squeeze(self.prediction_layer(concat))
 
