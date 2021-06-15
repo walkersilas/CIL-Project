@@ -30,8 +30,7 @@ class SVDpp():
         self.lr_all = config['lr_all']
         self.reg_all = config['reg_all']
 
-        self.algo = surprise.SVDpp(biased=False,
-                                   n_factors=self.n_factors,
+        self.algo = surprise.SVDpp(n_factors=self.n_factors,
                                    n_epochs=self.n_epochs,
                                    init_std_dev=self.init_std_dev,
                                    lr_all=self.lr_all,
@@ -40,11 +39,15 @@ class SVDpp():
     def fit(self):
         self.algo.fit(self.train_data)
 
-    def test(self):
+    def predict(self, data):
         predictions = []
-        for user, movie in self.test_data:
+        for user, movie in data:
             prediction = self.algo.predict(user.item(), movie.item()).est
             predictions.append(prediction)
+        return predictions
+
+    def test(self):
+        predictions = self.predict(self.test_data)
         prediction_output = np.stack((self.test_ids, predictions), axis=1)
         self.logger.experiment.log_table(filename="predictions.csv",
                                          tabular_data=prediction_output,

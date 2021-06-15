@@ -122,3 +122,9 @@ def create_cache_directories(config):
 
     if config["generate_nmf"] and not os.path.exists("cache/nmf"):
         os.mkdir("cache/nmf")
+
+    if config["generate_slopeone"] and not os.path.exists("cache/slopeone"):
+        os.mkdir("cache/slopeone")
+
+    if config["generate_svdpp"] and not os.path.exists("cache/svdpp"):
+        os.mkdir("cache/svdpp")

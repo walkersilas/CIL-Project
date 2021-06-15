@@ -14,13 +14,17 @@ from utilities.data_preparation import (
 )
 from modules import (
     nmf,
-    svd_unbiased
+    svd_unbiased,
+    slopeone,
+    svdpp
 )
 
 
 hyper_parameters = {
     'generate_svd': True,
     'generate_nmf': True,
+    'generate_slopeone': True,
+    'generate_svdpp': True,
     'train_size': 0.9
 }
 
@@ -61,34 +65,46 @@ def main():
 
     surprise_train_data = create_surprise_data(train_pd).build_full_trainset()
 
-    # Generate the predictions for each of the predictors
+    # Add all models for which predictions will be made
+    models = []
     if config['generate_svd']:
-        config_nmf = get_config(args, svd_unbiased.hyper_parameters)
-
-        svd_predictor = svd_unbiased.SVDUnbiased(surprise_train_data, test_data, test_ids, args, config_nmf, comet_logger)
-        svd_predictor.fit()
-
-        train_reinforcement = pd.DataFrame({ "Reinforcement": svd_predictor.predict(train_data) })
-        val_reinforcement = pd.DataFrame({ "Reinforcement": svd_predictor.predict(val_data) })
-        test_reinforcement = pd.DataFrame({ "Reinforcement": svd_predictor.predict(test_data) })
-
-        train_reinforcement.to_csv("cache/svd/train_reinforcement.csv", index=False)
-        val_reinforcement.to_csv("cache/svd/val_reinforcement.csv", index=False)
-        test_reinforcement.to_csv("cache/svd/test_reinforcement.csv", index=False)
+        config_svd = get_config(args, svd_unbiased.hyper_parameters)
+        svd_predictor = svd_unbiased.SVDUnbiased(surprise_train_data, test_data, test_ids, args, config_svd, comet_logger)
+        cache = "cache/svd/"
+        models.append((svd_predictor, cache))
 
     if config['generate_nmf']:
         config_nmf = get_config(args, nmf.hyper_parameters)
-
         nmf_predictor = nmf.NMF(surprise_train_data, test_data, test_ids, args, config_nmf, comet_logger)
-        nmf_predictor.fit()
+        cache = "cache/nmf/"
+        models.append((nmf_predictor, cache))
 
-        train_reinforcement = pd.DataFrame({ "Reinforcement": nmf_predictor.predict(train_data) })
-        val_reinforcement = pd.DataFrame({ "Reinforcement": nmf_predictor.predict(val_data) })
-        test_reinforcement = pd.DataFrame({ "Reinforcement": nmf_predictor.predict(test_data) })
+    if config['generate_slopeone']:
+        config_slopeone = get_config(args, slopeone.hyper_parameters)
+        slopeone_predictor = slopeone.SlopeOne(surprise_train_data, test_data, test_ids, args, config_slopeone, comet_logger)
+        cache = "cache/slopeone/"
+        models.append((slopeone_predictor, cache))
 
-        train_reinforcement.to_csv("cache/nmf/train_reinforcement.csv", index=False)
-        val_reinforcement.to_csv("cache/nmf/val_reinforcement.csv", index=False)
-        test_reinforcement.to_csv("cache/nmf/test_reinforcement.csv", index=False)
+    if config['generate_svdpp']:
+        config_svdpp = get_config(args, svdpp.hyper_parameters)
+        svdpp_predictor = svdpp.SVDpp(surprise_train_data, test_data, test_ids, args, config_svdpp, comet_logger)
+        cache = "cache/svdpp/"
+        models.append((svdpp_predictor, cache))
+
+
+    # Predict Reinforcements and save them in corresponding files
+    for model in models:
+        predictor = model[0]
+        cache = model[1]
+
+        predictor.fit()
+        train_reinforcement = pd.DataFrame({"Reinforcement": predictor.predict(train_data)})
+        val_reinforcement = pd.DataFrame({"Reinforcement": predictor.predict(val_data)})
+        test_reinforcement = pd.DataFrame({"Reinforcement": predictor.predict(test_data)})
+
+        train_reinforcement.to_csv(cache + "train_reinforcement.csv", index=False)
+        val_reinforcement.to_csv(cache + "val_reinforcement.csv", index=False)
+        test_reinforcement.to_csv(cache + "test_reinforcement.csv", index=False)
 
 
 if __name__ == "__main__":
