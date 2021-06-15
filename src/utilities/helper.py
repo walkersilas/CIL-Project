@@ -5,6 +5,7 @@ from argparse import (
 )
 import copy
 import json
+import os
 from pytorch_lightning.loggers import CometLogger
 
 
@@ -110,3 +111,14 @@ def create_comet_logger(args: Namespace) -> CometLogger:
             offline=False,
             save_dir=args.comet_directory if not args.leonhard else ("/cluster/scratch/" + comet_api_key["workspace"])
         )
+
+
+def create_cache_directories(config):
+    if not os.path.exists("cache"):
+        os.mkdir("cache")
+
+    if config["generate_svd"] and not os.path.exists("cache/svd"):
+        os.mkdir("cache/svd")
+
+    if config["generate_nmf"] and not os.path.exists("cache/nmf"):
+        os.mkdir("cache/nmf")
