@@ -19,7 +19,7 @@ hyper_parameters = {
     'train_size': 0.9,
     'patience': 3,
     'dropout': 0,
-    'reinforcement_type': "svd"
+    'reinforcement_type': ["svd", "nmf", "slopeone"]
 }
 
 
@@ -39,6 +39,7 @@ class GNN(pl.LightningModule):
         self.embedding_size = config['embedding_size']
         self.num_embedding_propagation_layers = config['num_embedding_propagation_layers']
         self.dropout = config['dropout']
+        self.num_reinforcements = len(config["reinforcement_type"])
 
         self.train_data = train_data
         self.val_data = val_data
@@ -82,7 +83,7 @@ class GNN(pl.LightningModule):
         )
 
         # Layer combining the reinforcements with the output of the neural network
-        self.combination_layer = nn.Linear(in_features=2, out_features=1)
+        self.combination_layer = nn.Linear(in_features=1 + self.num_reinforcements, out_features=1)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -107,7 +108,8 @@ class GNN(pl.LightningModule):
         concat = torch.cat((users_embedding, movies_embedding), dim=1)
         feed_forward_output = self.feed_forward(concat)
 
-        reinforcements = torch.unsqueeze(reinforcements, dim=1)
+        if self.num_reinforcements == 1:
+            reinforcements = torch.unsqueeze(reinforcements, dim=1)
         concat = torch.cat((feed_forward_output, reinforcements), dim=1)
 
         return torch.squeeze(self.combination_layer(concat))

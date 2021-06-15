@@ -28,7 +28,7 @@ def load_data(file_path: str,
 
 def load_reinforcements(file_path: str):
     data_pd = pd.read_csv(file_path)
-    return data_pd.Reinforcement.values
+    return np.expand_dims(data_pd.Reinforcement.values, axis=1)
 
 
 def __extract_users_items_predictions(data_pd: pd.DataFrame):

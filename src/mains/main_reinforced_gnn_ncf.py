@@ -7,7 +7,8 @@ from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from utilities.helper import (
     create_argument_parser,
     create_comet_logger,
-    get_config
+    get_config,
+    check_caches_exist
 )
 from utilities.data_preparation import (
     load_data,
@@ -23,6 +24,8 @@ def main():
     args = parser.parse_args()
 
     config = get_config(args, reinforced_gnn_ncf.hyper_parameters)
+
+    check_caches_exist(config["reinforcement_type"])
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)
@@ -46,10 +49,24 @@ def main():
         train_val_split=False
     )
 
-    reinforcement_cache = "cache/" + config["reinforcement_type"] + "/"
-    train_reinforcements = load_reinforcements(reinforcement_cache + "train_reinforcement.csv")
-    val_reinforcements = load_reinforcements(reinforcement_cache + "val_reinforcement.csv")
-    test_reinforcements = load_reinforcements(reinforcement_cache + "test_reinforcement.csv")
+    reinforcement_cache = None
+    train_reinforcements, val_reinforcements, test_reinforcements = None, None, None
+
+    for reinforcement_type in config["reinforcement_type"]:
+        reinforcement_cache = "cache/" + reinforcement_type + "/"
+        if train_reinforcements is None:
+            train_reinforcements = load_reinforcements(reinforcement_cache + "train_reinforcement.csv")
+            val_reinforcements = load_reinforcements(reinforcement_cache + "val_reinforcement.csv")
+            test_reinforcements = load_reinforcements(reinforcement_cache + "test_reinforcement.csv")
+        else:
+            cur_train_reinforcements = load_reinforcements(reinforcement_cache + "train_reinforcement.csv")
+            cur_val_reinforcements = load_reinforcements(reinforcement_cache + "val_reinforcement.csv")
+            cur_test_reinforcements = load_reinforcements(reinforcement_cache + "test_reinforcement.csv")
+
+            train_reinforcements = np.concatenate((train_reinforcements, cur_train_reinforcements), axis=1)
+            val_reinforcements = np.concatenate((val_reinforcements, cur_val_reinforcements), axis=1)
+            test_reinforcements = np.concatenate((test_reinforcements, cur_test_reinforcements), axis=1)
+
 
     train_data = create_dataset_with_reinforcements(train_pd, train_reinforcements)
     val_data = create_dataset_with_reinforcements(val_pd, val_reinforcements)

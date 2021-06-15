@@ -128,3 +128,14 @@ def create_cache_directories(config):
 
     if config["generate_svdpp"] and not os.path.exists("cache/svdpp"):
         os.mkdir("cache/svdpp")
+
+
+def check_caches_exist(reinforcement_types):
+    if not os.path.exists("cache"):
+        print("Could not find the cache directory. Please generate it using the reinfocement generator first ...")
+        exit()
+
+    for reinforcement_type in reinforcement_types:
+        if not os.path.exists("cache/" + reinforcement_type):
+            print("Could not find the cache directory for " + reinforcement_type + ". Please generate it using the reinfocement generator first ...")
+            exit()
