@@ -91,7 +91,7 @@ class GNN(pl.LightningModule):
 
     def init_weights(self, layer):
         if type(layer) == nn.Linear:
-            nn.init.xavier_uniform_(layer.weight)
+            nn.init.kaiming_uniform_(layer.weight)
             layer.bias.data.fill_(0.01)
 
     def get_initial_embeddings(self):
@@ -201,8 +201,8 @@ class GNN(pl.LightningModule):
             self.init_weights()
 
         def init_weights(self):
-            nn.init.xavier_uniform_(self.transformation_layer_1.weight)
-            nn.init.xavier_uniform_(self.transformation_layer_2.weight)
+            nn.init.kaiming_uniform_(self.transformation_layer_1.weight)
+            nn.init.kaiming_uniform_(self.transformation_layer_2.weight)
 
             self.transformation_layer_1.bias.data.fill_(0.01)
             self.transformation_layer_2.bias.data.fill_(0.01)
