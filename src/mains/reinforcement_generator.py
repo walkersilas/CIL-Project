@@ -16,15 +16,17 @@ from modules import (
     nmf,
     svd_unbiased,
     slopeone,
-    svdpp
+    svdpp,
+    knnbaseline
 )
 
 
 hyper_parameters = {
-    'generate_svd': True,
-    'generate_nmf': True,
-    'generate_slopeone': True,
-    'generate_svdpp': True,
+    'generate_svd': False,
+    'generate_nmf': False,
+    'generate_slopeone': False,
+    'generate_svdpp': False,
+    'generate_knn': True,
     'train_size': 0.9
 }
 
@@ -90,6 +92,12 @@ def main():
         svdpp_predictor = svdpp.SVDpp(surprise_train_data, test_data, test_ids, args, config_svdpp, comet_logger)
         cache = "cache/svdpp/"
         models.append((svdpp_predictor, cache))
+
+    if config['generate_knn']:
+        config_knn = get_config(args, knnbaseline.hyper_parameters)
+        knn_predictor = knnbaseline.KNNBaseline(surprise_train_data, test_data, test_ids, args, config_knn, comet_logger)
+        cache = "cache/knn/"
+        models.append((knn_predictor, cache))
 
 
     # Predict Reinforcements and save them in corresponding files

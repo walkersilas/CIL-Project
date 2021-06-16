@@ -40,11 +40,15 @@ class KNNBaseline():
     def fit(self):
         self.algo.fit(self.train_data)
 
-    def test(self):
+    def predict(self, data):
         predictions = []
-        for user, movie in self.test_data:
+        for user, movie in data:
             prediction = self.algo.predict(user.item(), movie.item()).est
             predictions.append(prediction)
+        return predictions
+
+    def test(self):
+        predictions = self.predict(self.test_data)
         prediction_output = np.stack((self.test_ids, predictions), axis=1)
         self.logger.experiment.log_table(filename="predictions.csv",
                                          tabular_data=prediction_output,
