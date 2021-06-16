@@ -139,3 +139,7 @@ def check_caches_exist(reinforcement_types):
         if not os.path.exists("cache/" + reinforcement_type):
             print("Could not find the cache directory for " + reinforcement_type + ". Please generate it using the reinfocement generator first ...")
             exit()
+
+def create_checkpoint_directory():
+    if not os.path.exists("checkpoints"):
+        os.mkdir("checkpoints")
