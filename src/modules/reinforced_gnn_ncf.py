@@ -108,8 +108,6 @@ class GNN(pl.LightningModule):
         concat = torch.cat((users_embedding, movies_embedding), dim=1)
         feed_forward_output = self.feed_forward(concat)
 
-        if self.num_reinforcements == 1:
-            reinforcements = torch.unsqueeze(reinforcements, dim=1)
         concat = torch.cat((feed_forward_output, reinforcements), dim=1)
 
         return torch.squeeze(self.combination_layer(concat))
