@@ -86,8 +86,8 @@ class GNN(pl.LightningModule):
         self.combination_layer = nn.Linear(in_features=1 + self.num_reinforcements, out_features=1)
 
         # Initialize the weights of the linear layers
-        self.feed_forward.apply(self.init_weights)
-        self.init_weights(self.combination_layer)
+        #self.feed_forward.apply(self.init_weights)
+        #self.init_weights(self.combination_layer)
 
     def init_weights(self, layer):
         if type(layer) == nn.Linear:
@@ -147,6 +147,7 @@ class GNN(pl.LightningModule):
     def test_epoch_end(self, outputs):
         predictions = torch.cat(outputs, dim=0).cpu()
         prediction_output = np.stack((self.test_ids, predictions.numpy()), axis=1)
+        prediction_output = np.clip(prediction_output, a_min=1, a_max=5)
 
         self.logger.experiment.log_table(
             filename="predictions.csv",
@@ -198,7 +199,7 @@ class GNN(pl.LightningModule):
             self.transformation_layer_2 = nn.Linear(in_features, out_features)
 
             # Initialize weights of the linear layers
-            self.init_weights()
+            #self.init_weights()
 
         def init_weights(self):
             nn.init.kaiming_uniform_(self.transformation_layer_1.weight)
