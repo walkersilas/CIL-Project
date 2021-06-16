@@ -138,7 +138,7 @@ class GNN(pl.LightningModule):
     def test_epoch_end(self, outputs):
         predictions = torch.cat(outputs, dim=0).cpu()
         prediction_output = np.stack((self.test_ids, predictions.numpy()), axis=1)
-        prediction_output = np.clip(prediction_output, a_min=1, a_max=5)
+        prediction_output = np.clip(prediction_output.astype(np.float), a_min=1, a_max=5)
 
         self.logger.experiment.log_table(
             filename="predictions.csv",
