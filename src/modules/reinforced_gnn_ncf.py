@@ -92,6 +92,7 @@ class GNN(pl.LightningModule):
     def init_weights(self, layer):
         if type(layer) == nn.Linear:
             nn.init.xavier_uniform_(layer.weight)
+            layer.bias.data.fill_(0.01)
 
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
@@ -202,6 +203,9 @@ class GNN(pl.LightningModule):
         def init_weights(self):
             nn.init.xavier_uniform_(self.transformation_layer_1.weight)
             nn.init.xavier_uniform_(self.transformation_layer_2.weight)
+
+            self.transformation_layer_1.bias.data.fill_(0.01)
+            self.transformation_layer_2.bias.data.fill_(0.01)
 
         def forward(self, previous_embedding, device):
             self.laplacian_matrix = self.laplacian_matrix.to(device)
