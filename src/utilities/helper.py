@@ -6,6 +6,7 @@ from argparse import (
 import copy
 import json
 import os
+import hashlib
 from pytorch_lightning.loggers import CometLogger
 
 
@@ -143,6 +144,15 @@ def check_caches_exist(reinforcement_types):
             print("Could not find the cache directory for " + reinforcement_type + ". Please generate it using the reinfocement generator first ...")
             exit()
 
+
 def create_checkpoint_directory():
     if not os.path.exists("checkpoints"):
         os.mkdir("checkpoints")
+
+
+def hash_config(config):
+    encoded = json.dumps(config, sort_keys=True).encode()
+
+    dhash = hashlib.md5()
+    dhash.update(encoded)
+    return dhash.hexdigest()

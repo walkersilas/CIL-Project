@@ -10,7 +10,8 @@ from utilities.helper import (
     create_comet_logger,
     get_config,
     check_caches_exist,
-    create_checkpoint_directory
+    create_checkpoint_directory,
+    hash_config
 )
 from utilities.data_preparation import (
     load_data,
@@ -82,7 +83,8 @@ def main():
         monitor='val_loss',
         patience=config['patience']
     )
-    checkpoint_filename = "reinforced_gnn_ncf_" + '_'.join(config["reinforcement_type"])
+
+    checkpoint_filename = "reinforced_gnn_ncf_" + str(hash_config(config))
     checkpoint_callback = ModelCheckpoint(
         dirpath="checkpoints",
         filename=checkpoint_filename,
