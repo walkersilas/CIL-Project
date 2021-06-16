@@ -3,10 +3,12 @@ from modules import ncf_baseline
 import numpy as np
 import torch
 import pytorch_lightning as pl
+from pytorch_lightning.callbacks import ModelCheckpoint
 from utilities.helper import (
     create_argument_parser,
     create_comet_logger,
-    get_config
+    get_config,
+    get_hash
 )
 from utilities.data_preparation import (
     load_data,
@@ -42,12 +44,31 @@ def main():
     test_ids, test_data = create_dataset(test_pd, test_dataset=True)
 
     ncf = ncf_baseline.NCF(train_data, val_data, test_data, test_ids, args, config)
+
+    checkpoint_filename = "ncf_baseline_" + str(get_hash(config, args))
+    checkpoint_callback = ModelCheckpoint(
+        dirpath="checkpoints",
+        filename=checkpoint_filename,
+        monitor='val_loss',
+        save_top_k=1,
+        mode="min"
+    )
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=config['num_epochs'],
-                         logger=comet_logger)
+                         max_epochs=1, #config['num_epochs'],
+                         logger=comet_logger,
+                         callbacks=[checkpoint_callback])
 
     trainer.fit(ncf)
-    trainer.test(ncf)
+
+    best_ncf = ncf_baseline.NCF.load_from_checkpoint(checkpoint_callback.best_model_path,
+                                                                            train_data=train_data,
+                                                                            val_data=val_data,
+                                                                            test_data=test_data,
+                                                                            test_ids=test_ids,
+                                                                            args=args,
+                                                                            config=config)
+
+    trainer.test(best_ncf)
 
 
 if __name__ == "__main__":
