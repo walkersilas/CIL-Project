@@ -97,7 +97,7 @@ def main():
 
     trainer.fit(graph_neural_network)
 
-    best_graph_neural_network = reinforced_gnn_ncf.GNN.load_from_checkpoint("checkpoints/" + checkpoint_filename + ".ckpt",
+    best_graph_neural_network = reinforced_gnn_ncf.GNN.load_from_checkpoint(checkpoint_callback.best_model_path,
                                                                             train_data=train_data,
                                                                             val_data=val_data,
                                                                             test_data=test_data,
