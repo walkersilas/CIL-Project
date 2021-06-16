@@ -85,6 +85,14 @@ class GNN(pl.LightningModule):
         # Layer combining the reinforcements with the output of the neural network
         self.combination_layer = nn.Linear(in_features=1 + self.num_reinforcements, out_features=1)
 
+        # Initialize the weights of the linear layers
+        self.feed_forward.apply(self.init_weights)
+        self.init_weights(self.combination_layer)
+
+    def init_weights(self, layer):
+        if type(layer) == nn.Linear:
+            nn.init.xavier_uniform_(layer.weight)
+
     def get_initial_embeddings(self):
         users = torch.LongTensor([i for i in range(self.number_of_users)]).to(self.device)
         movies = torch.LongTensor([i for i in range(self.number_of_movies)]).to(self.device)
@@ -187,6 +195,13 @@ class GNN(pl.LightningModule):
             # Linear transformation Layers used internally
             self.transformation_layer_1 = nn.Linear(in_features, out_features)
             self.transformation_layer_2 = nn.Linear(in_features, out_features)
+
+            # Initialize weights of the linear layers
+            self.init_weights()
+
+        def init_weights(self):
+            nn.init.xavier_uniform_(self.transformation_layer_1.weight)
+            nn.init.xavier_uniform_(self.transformation_layer_2.weight)
 
         def forward(self, previous_embedding, device):
             self.laplacian_matrix = self.laplacian_matrix.to(device)
