@@ -11,7 +11,7 @@ from utilities.helper import (
     get_config,
     check_caches_exist,
     create_checkpoint_directory,
-    hash_config
+    get_hash
 )
 from utilities.data_preparation import (
     load_data,
@@ -84,7 +84,7 @@ def main():
         patience=config['patience']
     )
 
-    checkpoint_filename = "reinforced_gnn_ncf_" + str(hash_config(config))
+    checkpoint_filename = "reinforced_gnn_ncf_" + str(get_hash(config, args))
     checkpoint_callback = ModelCheckpoint(
         dirpath="checkpoints",
         filename=checkpoint_filename,

@@ -150,9 +150,11 @@ def create_checkpoint_directory():
         os.mkdir("checkpoints")
 
 
-def hash_config(config):
-    encoded = json.dumps(config, sort_keys=True).encode()
+def get_hash(config, args):
+    encoded_config = json.dumps(config, sort_keys=True).encode()
+    encoded_args = json.dumps(vars(args), sort_keys=True).encode()
 
     dhash = hashlib.md5()
-    dhash.update(encoded)
+    dhash.update(encoded_config)
+    dhash.update(encoded_args)
     return dhash.hexdigest()
