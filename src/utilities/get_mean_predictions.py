@@ -41,6 +41,7 @@ def main():
         exit()
 
     # Compute mean predictions and log them using comet logger
+    mean_predictions = np.mean(predictions, axis=1)
     prediction_output = np.stack((ids, mean_predictions), axis=1)
     comet_logger.experiment.log_table(
         filename="predictions.csv",
