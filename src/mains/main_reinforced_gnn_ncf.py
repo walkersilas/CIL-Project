@@ -11,6 +11,7 @@ from utilities.helper import (
     get_config,
     check_caches_exist,
     create_checkpoint_directory,
+    create_ensemble_learning_directory,
     get_hash
 )
 from utilities.data_preparation import (
@@ -30,6 +31,8 @@ def main():
 
     check_caches_exist(config["reinforcement_type"])
     create_checkpoint_directory()
+    if args.ensemble_learning:
+        create_ensemble_learning_directory("reinforced_gnn_ncf")
 
     pl.seed_everything(args.random_seed)
     np.random.seed(7)

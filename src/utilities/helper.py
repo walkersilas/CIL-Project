@@ -74,6 +74,17 @@ def create_argument_parser() -> ArgumentParser:
         default=None,
         help="path to non-default config for testing"
     )
+    parser.add_argument(
+        "--ensemble-learning",
+        action="store_true",
+        help="flag indicating whether ensemble learning is enables"
+    )
+    parser.add_argument(
+        "--ensemble-directory",
+        type=str,
+        default=None,
+        help="path to the directory containing the predictions from the ensemble"
+    )
     return parser
 
 
@@ -145,6 +156,14 @@ def check_caches_exist(reinforcement_types):
 def create_checkpoint_directory():
     if not os.path.exists("checkpoints"):
         os.mkdir("checkpoints")
+
+
+def create_ensemble_learning_directory(model_name):
+    if not os.path.exists("ensemble"):
+        os.mkdir("ensemble")
+
+    if not os.path.exists("ensemble/" + model_name):
+        os.mkdir("ensemble/" + model_name)
 
 
 def get_hash(config, args):

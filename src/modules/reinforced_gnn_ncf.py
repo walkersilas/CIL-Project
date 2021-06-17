@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -145,6 +146,14 @@ class GNN(pl.LightningModule):
             tabular_data=prediction_output,
             headers=["Id", "Prediction"]
         )
+
+        if self.args.ensemble_learning:
+            predictions_pd = pd.DataFrame({
+                "Id": self.test_ids,
+                "Prediction": predictions
+            })
+            file_name = "ensemble/reinforced_gnn_ncf/predictions" + self.args.random_seed + ".csv"
+            predictions_pd.to_csv(file_name, index=False)
 
     def configure_optimizers(self):
         optimizer = optim.Adam(self.parameters(), lr=self.config['learning_rate'])
