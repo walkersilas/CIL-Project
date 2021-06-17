@@ -130,9 +130,6 @@ def create_cache_directories(config):
     if config["generate_svdpp"] and not os.path.exists("cache/svdpp"):
         os.mkdir("cache/svdpp")
 
-    if config["generate_knn"] and not os.path.exists("cache/knn"):
-        os.mkdir("cache/knn")
-
 
 def check_caches_exist(reinforcement_types):
     if not os.path.exists("cache"):
