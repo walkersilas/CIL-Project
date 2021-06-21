@@ -12,15 +12,23 @@ homepage = "https://github.com/walkersilas/CIL-Project"
 
 [tool.poetry.dependencies]
 python = "~3.8"
+comet-ml = "^3.8.1"
+numpy = "^1.20.2"
+pandas = "^1.2.4"
+pytorch-lightning = "^1.2.1"
+scikit-learn = "^0.24.1"
+scikit-surprise = "^1.1.1"
+# pytorch = 1.7.1+cu101
 
 [tool.poetry.dev-dependencies]
-black = "^21.4b2"
-flake8 = "^3.9.1"
-isort = "^5.8.0"
-mypy = "^0.812"
-pre-commit = "^2.12.1"
-pydocstyle = "^6.0.0"
-pylint = "^2.7.4"
+black = "^21.6b0"
+flake8 = "^3.9.2"
+isort = "^5.9.1"
+mypy = "^0.902"
+pre-commit = "^2.13.0"
+pydocstyle = "^6.1.1"
+pylint = "^2.8.3"
+
 
 [tool.black]
 line-length = 100
