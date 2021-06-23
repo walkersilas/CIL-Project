@@ -5,7 +5,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
-from utilities.evaluation_functions import get_score
+from utilities.evaluation_functions import (
+    get_score,
+    weighted_mse_loss
+)
 
 
 # Hyper Parameters used for the Model
@@ -48,7 +51,8 @@ class GNN(pl.LightningModule):
         self.test_ids = test_ids.to_numpy()
 
         # Loss function for training and evaluation
-        self.loss = nn.MSELoss()
+        self.loss = weighted_mse_loss
+        self.val_loss = nn.MSELoss()
 
         # Layers for embedding users and movies
         self.embedding_users = nn.Embedding(self.number_of_users, self.embedding_size)
@@ -117,7 +121,11 @@ class GNN(pl.LightningModule):
         users, movies, reinforcements, ratings = batch
 
         predictions = self(users, movies, reinforcements)
-        loss = self.loss(predictions, ratings.float())
+
+        differences = predictions - reinforcements
+        difference_sum = torch.sum(differences)
+        weights = differences / difference_sum
+        loss = self.loss(predictions, ratings.float(), weights)
         self.log('loss', loss)
         return loss
 
@@ -125,8 +133,9 @@ class GNN(pl.LightningModule):
         users, movies, reinforcements, ratings = batch
 
         predictions = self(users, movies, reinforcements)
-        val_loss = self.loss(predictions, ratings.float())
+        val_loss = self.val_loss(predictions, ratings.float())
         score = get_score(predictions.cpu().numpy(), ratings.cpu().numpy())
+
         self.log('val_loss', val_loss)
         self.log('score', score)
         return val_loss
