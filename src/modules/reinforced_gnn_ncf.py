@@ -122,7 +122,7 @@ class GNN(pl.LightningModule):
 
         predictions = self(users, movies, reinforcements)
 
-        differences = predictions - reinforcements
+        differences = torch.abs(predictions - reinforcements)
         difference_sum = torch.sum(differences)
         weights = differences / difference_sum
         loss = self.loss(predictions, ratings.float(), weights)
