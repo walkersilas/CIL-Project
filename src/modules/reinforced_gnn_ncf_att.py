@@ -1,3 +1,4 @@
+import GPUtil
 import numpy as np
 import pandas as pd
 import pytorch_lightning as pl
@@ -111,6 +112,10 @@ class GNN(pl.LightningModule):
 
     def forward(self, users, movies, reinforcements):
         current_embedding = self.get_initial_embeddings()
+
+        print("b")
+        GPUtil.showUtilization()
+
         final_embedding = None
         for layer in self.embedding_propagation_layers:
             current_embedding = layer(current_embedding, self.device)
