@@ -7,15 +7,10 @@ import surprise
 
 
 def load_data(file_path: str,
-              full_dataset: bool,
               train_val_split: bool,
               random_seed: int = 0,
               train_size: float = 0):
     data_pd = pd.read_csv(file_path)
-
-    # Reduce Dataset for Testing
-    if not full_dataset:
-        data_pd = data_pd.head(10000)
 
     if train_val_split:
         train_pd, val_pd = train_test_split(data_pd,

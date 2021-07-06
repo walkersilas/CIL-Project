@@ -42,17 +42,14 @@ def main():
 
     train_pd = load_data(
         file_path="cache/train_data.csv",
-        full_dataset=args.leonhard,
         train_val_split=False
     )
     val_pd = load_data(
         file_path="cache/val_data.csv",
-        full_dataset=args.leonhard,
         train_val_split=False
     )
     test_pd = load_data(
         file_path="cache/test_data.csv",
-        full_dataset=args.leonhard,
         train_val_split=False
     )
 

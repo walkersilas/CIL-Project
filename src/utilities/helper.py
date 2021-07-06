@@ -35,11 +35,6 @@ def create_argument_parser() -> ArgumentParser:
         help="name of the testing data file"
     )
     parser.add_argument(
-        "--leonhard",
-        action="store_true",
-        help="flag indicating whether the model is run in the leonhard cluster"
-    )
-    parser.add_argument(
         "--random-seed",
         type=int,
         default=7,
@@ -121,7 +116,7 @@ def create_comet_logger(args: Namespace) -> CometLogger:
             workspace=comet_api_key["workspace"],
             disabled=args.disable_logging,
             offline=False,
-            save_dir=args.comet_directory if not args.leonhard else ("/cluster/scratch/" + comet_api_key["workspace"])
+            save_dir="/cluster/scratch/" + comet_api_key["workspace"]
         )
 
 

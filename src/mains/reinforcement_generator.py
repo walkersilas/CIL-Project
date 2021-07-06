@@ -44,14 +44,12 @@ def main():
 
     train_pd, val_pd = load_data(
         file_path=args.data_dir + args.train_data,
-        full_dataset=args.leonhard,
         train_val_split=True,
         random_seed=args.random_seed,
         train_size=config['train_size']
     )
     test_pd = load_data(
         file_path=args.data_dir + args.test_data,
-        full_dataset=args.leonhard,
         train_val_split=False
     )
 
