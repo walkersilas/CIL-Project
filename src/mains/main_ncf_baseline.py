@@ -52,7 +52,7 @@ def main():
         mode="min"
     )
     trainer = pl.Trainer(gpus=(1 if torch.cuda.is_available() else 0),
-                         max_epochs=1, #config['num_epochs'],
+                         max_epochs=config['num_epochs'],
                          logger=comet_logger,
                          callbacks=[checkpoint_callback])
 
