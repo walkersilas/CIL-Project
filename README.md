@@ -41,14 +41,14 @@ As a first step, a Comet account needs to be created on the [Comet website](http
 To use Comet in our experiments, we need to create a file called `comet.json` containing the necessary information for the Comet API. The file should be of the following structure:
 ```json
 {
-  "api_key": API-KEY,
-  "project_name": PROJECT-NAME,
-  "workspace": WORKSPACE
+  "api_key": "API-KEY",
+  "project_name": "PROJECT-NAME",
+  "workspace": "WORKSPACE"
 }
 ```
-Hereby, the corresponding values from the Comet project should be inserted instead of the placeholder values `API-KEY`, `PROJECT-NAME`, and `WORKSPACE`.
+Hereby, the corresponding values from the Comet project should be inserted instead of the placeholder values API-KEY, PROJECT-NAME, and WORKSPACE.
 
-By default, the `comet.json` file is located in the `CIL-Project` directory. This default location can be changed by providing the corresponding command-line option `--comet-key /path/to/comet/key`. More detail on the command-line options is provided in Section 4.2.
+By default, the `comet.json` file is located in the `CIL-Project` directory. This default location can be changed by providing the corresponding command-line option `--comet-key path-to-comet-key`. More detail on the command-line options is provided in Section 4.2.
 
 ## 4. Executing Models
 TODO
