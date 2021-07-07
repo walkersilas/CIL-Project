@@ -115,4 +115,8 @@ TODO
 All of the experiments were run on the [Leonhard Cluster](https://scicomp.ethz.ch/wiki/Leonhard) using 1 GPU and 64 GB of RAM. All the standard models (without ensemble learning) finish execution in roughly 1 hour. Conversely, the ensemble learning model takes roughly 7.5 hours.
 
 ## 7. Acknowledgements
-TODO
+We would like to give credit to the following two libraries used during the project work:
+
+- [Pytorch Lightning](https://www.pytorchlightning.ai/) which provides a high-level interface for PyTorch.
+
+- [Surprise Library](https://github.com/NicolasHug/Surprise) which provides implementations of recommender system algorithms used in some of our baselines.
