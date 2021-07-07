@@ -137,7 +137,7 @@ python3 main_reinforced_gnn_ncf.py
 
 In order to experimentally determine which combination of reinforcements leads to the best performance, we have performed an exhaustive search of all combinations of the four available reinforcements. This was done using the configurations provided in `CIL-Project/experiments/configs`. As described before, the reinforcements do not need to be regenerated for each run of the neural network. Thus, we have generated the reinforcements once with `python3 reinforcement_generator.py`. Afterwards, we have executed each of the configurations using the following command where CONFIG is substituted with the config names:
 ```
-python3 main_reinforced_gnn_ncf.py --config ../../experiments/CONFIG.json
+python3 main_reinforced_gnn_ncf.py --config ../../experiments/configs/CONFIG.json
 ```
 
 ## 6. Resource Requirements
