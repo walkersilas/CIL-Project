@@ -10,7 +10,7 @@ The following provides a high-level overview of the repository structure. More d
 
 - `/data`: This directory contains all the data used for training and testing our models.
 - `/src`: The source code for all the models is contained in this directory.
-- `init_leonhard.sh`: Sets up the environment for the Leonhard Cluster. More detail on the setup is provided in Section 3.
+- `init_leonhard.sh`: Sets up the environment for the Leonhard Cluster. More detail on setting up the environment is provided in Section 3.
 - `requirements.txt`: Specifies the required dependencies to run the models.
 
 ## 3. Setup
@@ -51,18 +51,35 @@ Hereby, the corresponding values from the Comet project should be inserted inste
 By default, the `comet.json` file is located in the `CIL-Project` directory. This default location can be changed by providing the corresponding command-line option `--comet-key path-to-comet-key`. More detail on the command-line options is provided in Section 4.2.
 
 ## 4. Executing Models
-TODO
+After setting up the environment, executing different models is done in a fairly generic fashion. First, we need to change to the directory containing the main methods, i.e. `cd /src/mains`.
+
+If we want to execute the Reinforced GNN with NCF model, we need to create the reinforcements first. Thus, the model is executed as follows:
+```
+python3 reinforcement_generator.py
+python3 main_reinforced_gnn_ncf.py
+```
+Conversely, if we want to execute one of the other models, we simply execute the following command where MODEL is replaced by the corresponding model name:
+```
+python3 main_MODEL.py
+```
 
 ### 4.1 Ensemble Learning
-TODO
+In order to perform ensemble learning of the Reinforced GNN with NCF model, one needs to perform the following steps:
+
+1. Similarly to before, change to the directory containing the main methods `cd /src/mains`.
+
+2. Execute the shell script for ensemble learning of the Reinforced GNN with NCF model:
+```
+./ensemble_reinforced_gnn_ncf.sh
+```
 
 ### 4.2 Command-Line Options
 TODO
 
-## 5. Recreating Experiments
+## 5. Reproducing Experiments
 TODO
 
-## 6. Resource requirements
+## 6. Resource Requirements
 TODO
 
 ## 7. Acknowledgements
