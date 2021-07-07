@@ -22,10 +22,10 @@ from modules import (
 
 
 hyper_parameters = {
-    'generate_svd': False,
-    'generate_nmf': False,
-    'generate_slopeone': False,
-    'generate_svdpp': False,
+    'generate_svd': True,
+    'generate_nmf': True,
+    'generate_slopeone': True,
+    'generate_svdpp': True,
     'train_size': 0.9
 }
 
