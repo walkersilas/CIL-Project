@@ -9,7 +9,7 @@ Our team name for the Kaggle competition is `Our Team`.
 The following provides a high-level overview of the repository structure. More detail on the different directories is provided in the README corresponding to the directories.
 
 - `/data`: This directory contains all the data used for training and testing our models.
-- `/experiments`: This directory contains all the necessary material used for experimental evaluation of our models (except the models themselves).
+- `/experiments`: This directory contains all the additional material used for experimental evaluation of our models (except the models themselves).
 - `/predictions`: This directory contains all the predictions obtained by applying our models to the test data. Additionally, a table with the public score for all the predictions is included.
 - `/src`: The source code for all the models is contained in this directory.
 - `init_leonhard.sh`: Sets up the environment for the Leonhard Cluster. More detail on setting up the environment is provided in Section 3.
