@@ -76,7 +76,7 @@ In order to perform ensemble learning of the Reinforced GNN with NCF model, one 
 ### 4.2 Configurations
 Each of the models has a default configuration used for training and testing. To change this default configuration, one can provide a partial configuration as a JSON file. This is done using the command-line option `--config path-to-config-json`. The model then internally combines the default configuration with the provided new configuration. The final configuration used for running the model is then simply the default configuration where all values which are specified in the new configuration have been overwritten.
 
-As an example the following partial configuration overwrites the learning rate of the default configuration:
+As an example the following partial configuration overwrites the learning rate of the default configuration while keeping the rest of the default configuration as it is:
 ```json
 {
   "learning_rate": 1e-5
@@ -87,15 +87,25 @@ As an example the following partial configuration overwrites the learning rate o
 To provide some flexibility of the execution, all of the main methods support the same command-line options. These options are briefly described in the following:
 
 - `--data-dir`: This specifies the relative path from `CIL-Project/src/mains` to the data directory containing the unprocessed data. The default path is `../../data` which points to `CIL-Project/data`.
+
 - `--train-data`: This specifies the name of the training data file. The default name is `data_train.csv`.
+
 - `--test-data`: This specifies the name of the testing data file. The default name is `data_test.csv`.
+
 - `--random-seed`: This specifies the random seed used during the execution of the models. The default random seed is `7`.
+
 - `--disable-logging`: This specifies whether the Comet logger should be disabled. By default, this value is set to `false`.
+
 - `--comet-key`: This specifies the relative path from `CIL-Project/src/mains` to the Comet API key and credentials as described in Section 3.3. The default path is `../../comet.json` which points to `CIL-Project/comet.json`.
-- `--comet-directory`: This specifies the log directory when Comet can not be run in online mode. The default log directory is `./logs`
+
+- `--comet-directory`: This specifies the log directory when Comet can not be run in online mode. The default log directory is `./logs`.
+
 - `--dataloader-workers`: This specifies the number of worker threads used to load the data in the models. By default this value is set to `8`.
+
 - `--config`: This specifies the path to an optional configuration used for training and testing the models. The default value for this option is `None`.
+
 - `--ensemble-learning`: This option specifies whether the model is run with ensemble learning or not. By default, this option is set to `false`. Note that this option is only supported for the Reinforced GNN with NCF model.
+
 - `--ensemble-directory`: This option is used to specify the directory from which the mean predictions should be computed. By default, this option is set to `None`. Note that this option is only supported for `CIL-Project/src/utilities/get_mean_predictions.py` which combines predictions of multiple models.
 
 ## 5. Reproducing Experiments
