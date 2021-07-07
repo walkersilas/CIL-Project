@@ -113,11 +113,11 @@ To provide some flexibility of the execution, all of the main methods support th
 This section shortly describes how the experiments and results included in the report can be reproduced.
 
 ### 5.1 Simple Baselines
-The simple baselines include (1) SVD, (2) SVD++, (3) NMF, and (4) SlopeOne. Experiments for these models can be reproduced by simply executing the corresponding model as described in Section 4. Concretely, the four experiments for the models are executed with:
-1. `python3 main_svd_unbiased.py`
-2. `python3 main_svdpp.py`
-3. `python3 main_nmf.py`
-4. `python3 main_slopeone.py`
+The simple baselines include SVD, SVD++, NMF, and SlopeOne. Experiments for these models can be reproduced by simply executing the corresponding model as described in Section 4. Concretely, the four experiments for the models are executed with:
+- SVD: `python3 main_svd_unbiased.py`
+- SVD++: `python3 main_svdpp.py`
+- NMF: `python3 main_nmf.py`
+- SlopeOne: `python3 main_slopeone.py`
 
 ### 5.2 Neural Network Baselines
 TODO
