@@ -1,81 +1,69 @@
-# CIL-Project
+# Reinforced Graph Neural Networks for Collaborative Filtering
 
-## 1. Traditional Matrix Factorization
+## 1. Description
+This is a project of the Computational Intelligence Lab 2021 ([Course Website](http://da.inf.ethz.ch/teaching/2021/CIL/)). The project implements a recommender system of user-item ratings between 1 and 5 ([Kaggle Competition](https://www.kaggle.com/c/cil-collaborative-filtering-2021)).
 
-### Alternating Least Squares
+Our team name for the Kaggle competition is `Our Team`.
 
-* [Matrix Factorization techniques for Recommender Systems](https://datajobs.com/data-science-repo/Recommender-Systems-[Netflix].pdf)
-* [Improving regularized singular value decomposition for collaborative filtering](https://www.cs.uic.edu/~liub/KDD-cup-2007/proceedings/Regular-Paterek.pdf)
+## 2. Structure of Repository
+The following provides a high-level overview of the repository structure. More detail on the different directories is provided in the README corresponding to the directories.
 
-## 2. Autoencoders
+- `/data`: This directory contains all the data used for training and testing our models.
+- `/src`: The source code for all the models is contained in this directory.
+- `init_leonhard.sh`: Sets up the environment for the Leonhard Cluster. More detail on the setup is provided in Section 3.
+- `requirements.txt`: Specifies the required dependencies to run the models.
 
-### I-AutoRec and U-Autorec
+## 3. Setup
+### 3.1 Clone the project
+Cloning the project downloads all models used for this project including the data needed for training and prediction.
+```
+git clone https://github.com/walkersilas/CIL-Project.git
+cd CIL-Project
+```
 
-I-AutoRec seems to perform better than U-AutoRec.
+### 3.2 Setting up the Python Environment
+All the experiments for this project were run using Python version 3.7.7.
 
-### Enhance Dataset with Autoencoders
+First, a python virtual environment needs to be created in the `CIL-Project` directory. This is done using the following command in the `CIL-Project` directory:
+```
+python3 -m venv ./venv
+```
+Executing the `init_leonhard.sh` script installs the required dependencies and adds the source directory to the PYTHONPATH:
+```
+source ./init_leonhard.sh
+```
 
-* [AutoRec: Autoencoders Meet Collaborative Filtering](http://users.cecs.anu.edu.au/~u5098633/papers/www15.pdf)
-* [Collaborative Filtering with Stacked Denoising AutoEncoders and Sparse Inputs](https://hal.inria.fr/hal-01256422v1/document)
-* [Training Deep AutoEncoders for Collaborative Filtering](https://arxiv.org/pdf/1708.01715.pdf)
+### 3.3 Setting up the Comet Logger
+In order to log the experiments and retrieve the predictions, we have used [Comet](https://www.comet.ml/). This logger enables tracking different metrics during training. Additionally, the predictions of our models are logged directly as an asset using Comet. Access to these predictions is then granted on the Comet website.
 
-## 3. Neural Networks
+As a first step, a Comet account needs to be created on the [Comet website](https://www.comet.ml/). Afterwards, a new project can be added to the workspace of Comet. When viewing the project, the API key is accessible.
 
-### Deep and Wide Neural Networks
+To use Comet in our experiments, we need to create a file called `comet.json` containing the necessary information for the Comet API. The file should be of the following structure:
+```json
+{
+  "api_key": API-KEY,
+  "project_name": PROJECT-NAME,
+  "workspace": WORKSPACE
+}
+```
+Hereby, the corresponding values from the Comet project should be inserted instead of the placeholder values `API-KEY`, `PROJECT-NAME`, and `WORKSPACE`.
 
-### Include Reliabilities in Neural Networks
+By default, the `comet.json` file is located in the `CIL-Project` directory. This default location can be changed by providing the corresponding command-line option `--comet-key /path/to/comet/key`. More detail on the command-line options is provided in Section 4.2.
 
-### Graph Neural Networks
+## 4. Executing Models
+TODO
 
-* [Neural Collaborative Filtering](https://arxiv.org/pdf/1708.05031.pdf)
-* [Deep Learning Architecture for Collaborative Filtering Recommender Systems](https://www.researchgate.net/publication/340416554_Deep_Learning_Architecture_for_Collaborative_Filtering_Recommender_Systems)
-* [Deep Learning based Recommender System: A Survey and New Perspectives](https://arxiv.org/pdf/1707.07435.pdf)
-* [Neural Graph Collaborative Filtering](https://arxiv.org/pdf/1905.08108.pdf) --> [code](https://github.com/metahexane/ngcf_pytorch_g61/blob/master/ngcf.py) and [medium](https://medium.com/@yusufnoor_88274/implementing-neural-graph-collaborative-filtering-in-pytorch-4d021dff25f3)
+### 4.1 Ensemble Learning
+TODO
 
-# CIL-Roadmap
+### 4.2 Command-Line Options
+TODO
 
-1. (28.04) Test out some other baseline approaches
- * Integrate GCF in ```pl.LightningModule``` [DONE]
- * Prediction-backward NNs [DONE]
- * Implementation of NCF [DONE]
+## 5. Recreating Experiments
+TODO
 
-2. (05.05) Finish baselines
- * Try out AEs [DONE]
- * End-to-end implementation of baselines (uniformity in code) [NOT DONE]
+## 6. Resource requirements
+TODO
 
-3. (12.05) Think about final model
- * Integrate GCF in general code framework [DONE]
- * Describe ideas of (concrete) final models
-   *  Input --> (V)AE --*Denoised version of the data*--> GNN: embedding + feed-forward network (NCF) --> Prediction
-   *  Bagging
-   *  Include error in feed-forward network
- * Try out VAEs (and if time remains try out denoising through AEs) [DONE]
- * Try out bagging of various models [DONE]
- * End-to-end implementation of baselines (uniformity in code) [CLOSE]
-
-4. (19.05) Implement various combinations of baselines 
- * (V)AE + GNN
- * GNN + NCF 
- * NCF full-implementation
- * End-to-end implementation of baselines (uniformity in code)
-
-5. (26.05) Implement final model
- * Improve NN approaches: Xavier, learning rate schedulers,  
- * Implement easy baselines: Bayesian SVD++ and ensembling those
- * Data preprocessing: reduce data size and stack in to GNN + NCF
- * NCF + Error fed back into
-
-6. (02.06) Add pretraining
-
-### To-do list:
-1. Easy baselines [Lasse]
-2. Dimensionality reduction [Andras]
-3. NCF with feeback loop [Silas]
-4. NN improvements (and AE if time) [Matteo] 
-5. Code cleanup: Flake8 (Low Priority)
-
-
-# Datasets
-* [MovieLens](https://grouplens.org/datasets/movielens/)
-* [Amazon Review Data](https://nijianmo.github.io/amazon/index.html)
-
+## 7. Acknowledgements
+TODO
