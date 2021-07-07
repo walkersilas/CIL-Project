@@ -9,6 +9,7 @@ Our team name for the Kaggle competition is `Our Team`.
 The following provides a high-level overview of the repository structure. More detail on the different directories is provided in the README corresponding to the directories.
 
 - `/data`: This directory contains all the data used for training and testing our models.
+- `/experiments`: This directory contains all the necessary material used for experimental evaluation of our models (except the models themselves).
 - `/src`: The source code for all the models is contained in this directory.
 - `init_leonhard.sh`: Sets up the environment for the Leonhard Cluster. More detail on setting up the environment is provided in Section 3.
 - `requirements.txt`: Specifies the required dependencies to run the models.
@@ -109,6 +110,19 @@ To provide some flexibility of the execution, all of the main methods support th
 - `--ensemble-directory`: This option is used to specify the directory from which the mean predictions should be computed. By default, this option is set to `None`. Note that this option is only supported for `CIL-Project/src/utilities/get_mean_predictions.py` which combines predictions of multiple models.
 
 ## 5. Reproducing Experiments
+This section shortly describes how the experiments and results included in the report can be reproduced.
+
+### 5.1 Simple Baselines
+The simple baselines include (1) SVD, (2) SVD++, (3) NMF, and (4) SlopeOne. Experiments for these models can be reproduced by simply executing the corresponding model as described in Section 4. Concretely, the four experiments for the models are executed with:
+1. `python3 main_svd_unbiased.py`
+2. `python3 main_svdpp.py`
+3. `python3 main_nmf.py`
+4. `python3 main_slopeone.py`
+
+### 5.2 Neural Network Baselines
+TODO
+
+### 5.3 Reinforced Graph Neural Network
 TODO
 
 ## 6. Resource Requirements
