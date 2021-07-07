@@ -112,7 +112,7 @@ To provide some flexibility of the execution, all of the main methods support th
 TODO
 
 ## 6. Resource Requirements
-TODO
+All of the experiments were run on the [Leonhard Cluster](https://scicomp.ethz.ch/wiki/Leonhard) using 1 GPU and 64 GB of RAM. All the standard models (without ensemble learning) finish execution in roughly 1 hour. Conversely, the ensemble learning model takes roughly 7.5 hours.
 
 ## 7. Acknowledgements
 TODO
