@@ -18,7 +18,7 @@ def main():
 
     config = get_config(args, nmf.hyper_parameters)
 
-    np.random.seed(7)
+    np.random.seed(args.random_seed)
 
     comet_logger = create_comet_logger(args)
     comet_logger.log_hyperparams(config)
