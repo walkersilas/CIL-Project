@@ -1,5 +1,18 @@
 # Reinforced Graph Neural Networks for Collaborative Filtering
 
+[![build](https://github.com/walkersilas/CIL-Project/actions/workflows/precommit-checks.yml/badge.svg?branch=main)](https://github.com/walkersilas/CIL-Project/actions/workflows/precommit-checks.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/walkersilas/CIL-Project/blob/main/LICENSE)
+
+<p align="center">
+  <a href="#1-description">Description</a> •
+  <a href="#2-structure-of-repository">Structure of Repository</a> •
+  <a href="#3-setup">Setup</a> •
+  <a href="#4-executing-models">Executing Models</a> •
+  <a href="#5-reproducing-experiments">Reproducing Experiments</a> •
+  <a href="#6-resource-requirements">Resource Requirements</a> •
+  <a href="#7-acknowledgements">Acknowledgements</a>
+</p>
+
 ## 1. Description
 This is a project of the Computational Intelligence Lab 2021 ([Course Website](http://da.inf.ethz.ch/teaching/2021/CIL/)). The project implements a recommender system of user-item ratings between 1 and 5 ([Kaggle Competition](https://www.kaggle.com/c/cil-collaborative-filtering-2021)).
 
