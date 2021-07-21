@@ -12,6 +12,8 @@ repos:
     rev: 3.9.1
     hooks:
       - id: flake8
+        args: [--exit-zero]
+        verbose: true
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.0.0
     hooks:
