@@ -3,10 +3,10 @@ This directory contains the predictions of our models. Additionally, the public 
 
 Model | Public Score
 ------|-------------
-SVD Baseline | 0
+SVD Baseline | 1.00324
 SVD++ Baseline | 0
-NMF Baseline | 0
-SlopeOne Baseline | 0
+NMF Baseline | 1.00036
+SlopeOne Baseline | 0.99832
 NCF Baseline | 0
 GNN Baseline | 0
 GNN with NCF Baseline | 0
