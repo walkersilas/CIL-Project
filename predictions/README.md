@@ -9,4 +9,4 @@ NMF Baseline | 1.00036
 SlopeOne Baseline | 0.99832
 NCF Baseline | 0
 GNN Baseline | 0.98920
-GNN with NCF Baseline | 0
+GNN with NCF Baseline | 0.98849
