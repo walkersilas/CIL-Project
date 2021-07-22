@@ -4,9 +4,9 @@ This modules trains and tests the baseline NCF model.
 """
 
 import numpy as np
+from comet_ml import Experiment
 import pytorch_lightning as pl
 import torch
-from comet_ml import Experiment
 from pytorch_lightning.callbacks import ModelCheckpoint
 
 from modules import ncf_baseline
