@@ -7,6 +7,6 @@ SVD Baseline | 1.00324
 SVD++ Baseline | 0
 NMF Baseline | 1.00036
 SlopeOne Baseline | 0.99832
-NCF Baseline | 0
+NCF Baseline | 1.02400
 GNN Baseline | 0.98920
 GNN with NCF Baseline | 0.98849
