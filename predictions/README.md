@@ -4,9 +4,24 @@ This directory contains the predictions of our models. Additionally, the public 
 Model | Public Score
 ------|-------------
 SVD Baseline | 1.00324
-SVD++ Baseline | 0.99881
 NMF Baseline | 1.00036
+SVD++ Baseline | 0.99881
 SlopeOne Baseline | 0.99832
 NCF Baseline | 1.02400
 GNN Baseline | 0.98920
 GNN with NCF Baseline | 0.98849
+Reinforced GNN with NCF (NMF, SlopeOne, SVD++) | 0.98647
+Reinforced GNN with NCF (NMF, SlopeOne) | 0.98695
+Reinforced GNN with NCF (NMF, SVD++) | 0.98605
+Reinforced GNN with NCF (NMF) | 0.98679
+Reinforced GNN with NCF (SlopeOne, SVD++) | 0.98689
+Reinforced GNN with NCF (SlopeOne) | 0.98544
+Reinforced GNN with NCF (SVD, NMF, SlopeOne, SVD++) | 0.98590
+Reinforced GNN with NCF (SVD, NMF, SlopeOne) | 0.98703
+Reinforced GNN with NCF (SVD, NMF, SVD++) | -
+Reinforced GNN with NCF (SVD, NMF) | -
+Reinforced GNN with NCF (SVD, SlopeOne, SVD++) | -
+Reinforced GNN with NCF (SVD, SlopeOne) | -
+Reinforced GNN with NCF (SVD, SVD++) | -
+Reinforced GNN with NCF (SVD) | -
+Reinforced GNN with NCF (SVD++) | -
