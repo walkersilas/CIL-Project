@@ -16,7 +16,7 @@ def main():
     parser = create_argument_parser()
     args = parser.parse_args()
 
-    config = get_config(args, slopeone.hyper_parameters)
+    config = get_config(args, {})
 
     np.random.seed(args.random_seed)
 

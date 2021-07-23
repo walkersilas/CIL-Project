@@ -77,7 +77,7 @@ def main():
         models.append((nmf_predictor, cache))
 
     if config["generate_slopeone"]:
-        config_slopeone = get_config(args, slopeone.hyper_parameters)
+        config_slopeone = get_config(args, {})
         slopeone_predictor = slopeone.SlopeOne(
             surprise_train_data, test_data, test_ids, args, config_slopeone, comet_logger
         )

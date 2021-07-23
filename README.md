@@ -1,6 +1,6 @@
 # Reinforced Graph Neural Networks for Collaborative Filtering
 
-[![build](https://github.com/walkersilas/CIL-Project/actions/workflows/precommit-checks.yml/badge.svg?branch=main)](https://github.com/walkersilas/CIL-Project/actions/workflows/precommit-checks.yml)
+[![build](https://github.com/walkersilas/CIL-Project/actions/workflows/build.yml/badge.svg)](https://github.com/walkersilas/CIL-Project/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/walkersilas/CIL-Project/blob/main/LICENSE)
 
 <p align="center">
@@ -38,7 +38,7 @@ cd CIL-Project
 ```
 
 ### 3.2 Setting up the Python Environment
-All the experiments for this project were run using Python version 3.7.7.
+All the experiments for this project were run using Python version 3.7.1.
 
 First, a python virtual environment needs to be created in the `CIL-Project` directory. This is done using the following command in the `CIL-Project` directory:
 ```
