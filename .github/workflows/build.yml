@@ -30,4 +30,4 @@ jobs:
         python -m pip install pre-commit
     - name: Run pre-commit checks
       run: |
-        pre-commit run --all-files
+        SKIP=isort pre-commit run --all-files
