@@ -18,10 +18,11 @@ Reinforced GNN with NCF (SlopeOne, SVD++) | 0.98689
 Reinforced GNN with NCF (SlopeOne) | 0.98544
 Reinforced GNN with NCF (SVD, NMF, SlopeOne, SVD++) | 0.98590
 Reinforced GNN with NCF (SVD, NMF, SlopeOne) | 0.98703
-Reinforced GNN with NCF (SVD, NMF, SVD++) | -
-Reinforced GNN with NCF (SVD, NMF) | -
-Reinforced GNN with NCF (SVD, SlopeOne, SVD++) | -
-Reinforced GNN with NCF (SVD, SlopeOne) | -
-Reinforced GNN with NCF (SVD, SVD++) | -
-Reinforced GNN with NCF (SVD) | -
-Reinforced GNN with NCF (SVD++) | -
+Reinforced GNN with NCF (SVD, NMF, SVD++) | 0.98680
+Reinforced GNN with NCF (SVD, NMF) | 0.98801
+Reinforced GNN with NCF (SVD, SlopeOne, SVD++) | 0.98637
+Reinforced GNN with NCF (SVD, SlopeOne) | 0.98697
+Reinforced GNN with NCF (SVD, SVD++) | 0.98749
+Reinforced GNN with NCF (SVD) | 0.98750
+Reinforced GNN with NCF (SVD++) | 0.98624
+Ensemble Reinforced GNN with NCF (SlopeOne) | 0.98210
