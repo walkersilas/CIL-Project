@@ -1,36 +1,33 @@
-from comet_ml import Experiment
+"""Reinforcement generator.
+
+This module generates reinforcements to use with the reinforced GNN NCF model
+when executed as main.
+"""
+
 import numpy as np
 import pandas as pd
+from comet_ml import Experiment
+
+from modules import nmf, slopeone, svd_unbiased, svdpp
+from utilities.data_preparation import create_dataset, create_surprise_data, load_data
 from utilities.helper import (
     create_argument_parser,
-    create_comet_logger,
     create_cache_directories,
-    get_config
+    create_comet_logger,
+    get_config,
 )
-from utilities.data_preparation import (
-    load_data,
-    create_dataset,
-    create_surprise_data
-)
-from modules import (
-    nmf,
-    svd_unbiased,
-    slopeone,
-    svdpp,
-    knnbaseline
-)
-
 
 hyper_parameters = {
-    'generate_svd': False,
-    'generate_nmf': False,
-    'generate_slopeone': False,
-    'generate_svdpp': False,
-    'train_size': 0.9
+    "generate_svd": True,
+    "generate_nmf": True,
+    "generate_slopeone": True,
+    "generate_svdpp": True,
+    "train_size": 0.9,
 }
 
 
 def main():
+    """Generate reinforcements."""
     parser = create_argument_parser()
     args = parser.parse_args()
 
@@ -44,16 +41,11 @@ def main():
 
     train_pd, val_pd = load_data(
         file_path=args.data_dir + args.train_data,
-        full_dataset=args.leonhard,
         train_val_split=True,
         random_seed=args.random_seed,
-        train_size=config['train_size']
+        train_size=config["train_size"],
     )
-    test_pd = load_data(
-        file_path=args.data_dir + args.test_data,
-        full_dataset=args.leonhard,
-        train_val_split=False
-    )
+    test_pd = load_data(file_path=args.data_dir + args.test_data, train_val_split=False)
 
     # Write the split data to the cache for later use
     train_pd.to_csv("cache/train_data.csv", index=False)
@@ -68,30 +60,37 @@ def main():
 
     # Add all models for which predictions will be made
     models = []
-    if config['generate_svd']:
+    if config["generate_svd"]:
         config_svd = get_config(args, svd_unbiased.hyper_parameters)
-        svd_predictor = svd_unbiased.SVDUnbiased(surprise_train_data, test_data, test_ids, args, config_svd, comet_logger)
+        svd_predictor = svd_unbiased.SVDUnbiased(
+            surprise_train_data, test_data, test_ids, args, config_svd, comet_logger
+        )
         cache = "cache/svd/"
         models.append((svd_predictor, cache))
 
-    if config['generate_nmf']:
+    if config["generate_nmf"]:
         config_nmf = get_config(args, nmf.hyper_parameters)
-        nmf_predictor = nmf.NMF(surprise_train_data, test_data, test_ids, args, config_nmf, comet_logger)
+        nmf_predictor = nmf.NMF(
+            surprise_train_data, test_data, test_ids, args, config_nmf, comet_logger
+        )
         cache = "cache/nmf/"
         models.append((nmf_predictor, cache))
 
-    if config['generate_slopeone']:
-        config_slopeone = get_config(args, slopeone.hyper_parameters)
-        slopeone_predictor = slopeone.SlopeOne(surprise_train_data, test_data, test_ids, args, config_slopeone, comet_logger)
+    if config["generate_slopeone"]:
+        config_slopeone = get_config(args, {})
+        slopeone_predictor = slopeone.SlopeOne(
+            surprise_train_data, test_data, test_ids, args, config_slopeone, comet_logger
+        )
         cache = "cache/slopeone/"
         models.append((slopeone_predictor, cache))
 
-    if config['generate_svdpp']:
+    if config["generate_svdpp"]:
         config_svdpp = get_config(args, svdpp.hyper_parameters)
-        svdpp_predictor = svdpp.SVDpp(surprise_train_data, test_data, test_ids, args, config_svdpp, comet_logger)
+        svdpp_predictor = svdpp.SVDpp(
+            surprise_train_data, test_data, test_ids, args, config_svdpp, comet_logger
+        )
         cache = "cache/svdpp/"
         models.append((svdpp_predictor, cache))
-
 
     # Predict Reinforcements and save them in corresponding files
     for model in models:

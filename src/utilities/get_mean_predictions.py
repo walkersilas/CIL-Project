@@ -1,14 +1,19 @@
-from comet_ml import Experiment
+"""Retrieve mean predictions for ensembles.
+
+This module retrieves the mean prediction for ensembles when run as main.
+"""
+
 import os
-import pandas as pd
+
 import numpy as np
-from utilities.helper import (
-    create_argument_parser,
-    create_comet_logger
-)
+import pandas as pd
+from comet_ml import Experiment
+
+from utilities.helper import create_argument_parser, create_comet_logger
 
 
 def main():
+    """Compute mean predictions from ensemble."""
     parser = create_argument_parser()
     args = parser.parse_args()
     comet_logger = create_comet_logger(args)
@@ -21,7 +26,6 @@ def main():
     if not os.path.exists(directory):
         print("The provided directory path does not exists ...")
         exit()
-
 
     ids, predictions = None, None
     # Search for all files ending with '.csv' and combine them in one numpy array
@@ -44,9 +48,7 @@ def main():
     mean_predictions = np.mean(predictions, axis=1)
     prediction_output = np.stack((ids, mean_predictions), axis=1)
     comet_logger.experiment.log_table(
-        filename="predictions.csv",
-        tabular_data=prediction_output,
-        headers=["Id", "Prediction"]
+        filename="predictions.csv", tabular_data=prediction_output, headers=["Id", "Prediction"]
     )
 
 
