@@ -18,8 +18,8 @@ pandas = "1.2.4"
 pytorch-lightning = "1.2.1"
 scikit-learn = "0.24.1"
 scikit-surprise = "1.1.1"
+torch = "1.7.1"
 
-# pytorch = "1.7.1"
 # cudatoolkit = "10.1"
 
 [tool.poetry.dev-dependencies]
