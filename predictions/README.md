@@ -10,6 +10,13 @@ SlopeOne Baseline | 0.99832
 NCF Baseline | 1.02400
 GNN Baseline | 0.98920
 GNN with NCF Baseline | 0.98849
+Reinforced GNN with NCF (SlopeOne) | 0.98544
+Ensemble Reinforced GNN with NCF (SlopeOne) | 0.98210
+
+For the sake of completeness, we include a table with the public scores of our experiments used to determine the best combination of reinforcements:
+
+Model | Public Score
+------|-------------
 Reinforced GNN with NCF (NMF, SlopeOne, SVD++) | 0.98647
 Reinforced GNN with NCF (NMF, SlopeOne) | 0.98695
 Reinforced GNN with NCF (NMF, SVD++) | 0.98605
@@ -25,4 +32,3 @@ Reinforced GNN with NCF (SVD, SlopeOne) | 0.98697
 Reinforced GNN with NCF (SVD, SVD++) | 0.98749
 Reinforced GNN with NCF (SVD) | 0.98750
 Reinforced GNN with NCF (SVD++) | 0.98624
-Ensemble Reinforced GNN with NCF (SlopeOne) | 0.98210
