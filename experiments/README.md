@@ -3,4 +3,5 @@ This directory contains all the supplementary material used for creating the exp
 
 ## Structure of Directory
 - `/configs`: This folder contains the different configurations of reinforcements. Using these configurations, we have observed the performance difference depending on the combination of reinforcements used.
+- `/figures`: This folder contains code used to generate figures for the report.
 - `/notebooks`: This folder contains Jupyter notebooks used in experimentation, such as hyperparamater tuning for the simple baselines.
