@@ -9,8 +9,9 @@
   <a href="#3-setup">Setup</a> •
   <a href="#4-executing-models">Executing Models</a> •
   <a href="#5-reproducing-experiments">Reproducing Experiments</a> •
-  <a href="#6-resource-requirements">Resource Requirements</a> •
-  <a href="#7-acknowledgements">Acknowledgements</a>
+  <a href="#6-public-scores">Public Scores</a> •
+  <a href="#7-resource-requirements">Resource Requirements</a> •
+  <a href="#8-acknowledgements">Acknowledgements</a>
 </p>
 
 ## 1. Description
@@ -154,10 +155,45 @@ In order to experimentally determine which combination of reinforcements leads t
 python3 main_reinforced_gnn_ncf.py --config ../../experiments/configs/CONFIG.json
 ```
 
-## 6. Resource Requirements
+## 6. Public Scores
+This section contains the public scores from the [Kaggle Competition](https://www.kaggle.com/c/cil-collaborative-filtering-2021) of our models. The following table contains the public scores of the tuned models:
+
+Model | Public Score
+------|-------------
+SVD Baseline | 1.00324
+NMF Baseline | 1.00036
+SVD++ Baseline | 0.99881
+SlopeOne Baseline | 0.99832
+NCF Baseline | 1.02400
+GNN Baseline | 0.98920
+GNN with NCF Baseline | 0.98849
+Reinforced GNN with NCF (SlopeOne) | 0.98544
+Ensemble Reinforced GNN with NCF (SlopeOne) | 0.98210
+
+For the sake of completeness, we include a table with the public scores of our experiments used to determine the best combination of reinforcements:
+
+Model | Public Score
+------|-------------
+Reinforced GNN with NCF (NMF, SlopeOne, SVD++) | 0.98647
+Reinforced GNN with NCF (NMF, SlopeOne) | 0.98695
+Reinforced GNN with NCF (NMF, SVD++) | 0.98605
+Reinforced GNN with NCF (NMF) | 0.98679
+Reinforced GNN with NCF (SlopeOne, SVD++) | 0.98689
+Reinforced GNN with NCF (SlopeOne) | 0.98544
+Reinforced GNN with NCF (SVD, NMF, SlopeOne, SVD++) | 0.98590
+Reinforced GNN with NCF (SVD, NMF, SlopeOne) | 0.98703
+Reinforced GNN with NCF (SVD, NMF, SVD++) | 0.98680
+Reinforced GNN with NCF (SVD, NMF) | 0.98801
+Reinforced GNN with NCF (SVD, SlopeOne, SVD++) | 0.98637
+Reinforced GNN with NCF (SVD, SlopeOne) | 0.98697
+Reinforced GNN with NCF (SVD, SVD++) | 0.98749
+Reinforced GNN with NCF (SVD) | 0.98750
+Reinforced GNN with NCF (SVD++) | 0.98624
+
+## 7. Resource Requirements
 All of the experiments were run on the [Leonhard Cluster](https://scicomp.ethz.ch/wiki/Leonhard) using 1 GPU and 64 GB of RAM. All the standard models (without ensemble learning) finish execution in roughly 1 hour. Conversely, the ensemble learning model takes roughly 7.5 hours.
 
-## 7. Acknowledgements
+## 8. Acknowledgements
 We would like to give credit to the following two libraries used during the project work:
 
 - [Pytorch Lightning](https://www.pytorchlightning.ai/) which provides a high-level interface for PyTorch.
