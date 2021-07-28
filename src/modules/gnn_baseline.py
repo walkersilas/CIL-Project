@@ -87,10 +87,7 @@ class GNN(pl.LightningModule):
         # the embedding propagation layers.
         input_size = 2 * self.num_embedding_propagation_layers * self.embedding_size
         self.feed_forward = nn.Sequential(
-            nn.Linear(in_features=input_size, out_features=64),
-            nn.ReLU(),
-            nn.Linear(in_features=64, out_features=32),
-            nn.Linear(in_features=32, out_features=1),
+            nn.Linear(in_features=input_size, out_features=1)
         )
 
     def get_initial_embeddings(self):
