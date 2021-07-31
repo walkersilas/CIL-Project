@@ -1,0 +1,90 @@
+%%%% 
+% This is a template for project reports in the subject DAT620 at the
+% Department of Electrical Engineering and Computer Science,
+% University of Stavanger.
+% 
+% The template is based on the ACM conference template 
+% it was edited by Leander Jehl and Hein Meling
+\documentclass[sigconf]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+% Set paper size of Report
+\geometry{a4paper}
+
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+
+\setcopyright{none}
+\acmDOI{}
+\acmISBN{}
+\acmConference{Computational Intelligence Lab}{\today}{Zurich}
+\copyrightyear{2021}
+
+%In the preamble file you can include packages and define macros.
+\input{preamble}
+
+\begin{document}
+
+\title{Reinforced Graph Neural Networks for Collaborative Filtering}
+
+\settopmatter{authorsperrow=4}
+\author{Silas Walker}
+\affiliation{
+	\institution{ETH Zurich, Switzerland}
+}
+\email{walkers@student.ethz.ch}
+
+\author{Matteo Russo}
+\affiliation{
+	\institution{ETH Zurich, Switzerland}
+}
+\email{mrusso@ethz.ch}
+
+\author{Lasse Anthony}
+\affiliation{
+	\institution{ETH Zurich, Switzerland}
+}
+\email{laanthony@student.ethz.ch}
+
+\author{Andras Geiszl}
+\affiliation{
+	\institution{ETH Zurich, Switzerland}
+}
+\email{ageiszl@student.ethz.ch}
+
+\author{Group: Our Team}
+
+
+\begin{abstract}
+\input{00_abstract}
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:introduction}
+\input{01_introduction}
+
+\section{Models \& Methods}
+\label{sec:models_and_methods}
+\input{02_models_and_methods}
+
+\section{Experiments}
+\label{sec:results}
+\input{03_results}
+
+\section{Discussion}
+\label{sec:discussion}
+\input{04_discussion}
+
+\section{Summary and Future Work}
+\label{sec:summary}
+\input{05_summary}
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bibliography}
+
+\clearpage
+
+\includepdf[pages=-]{declaration-originality.pdf}
+
+\end{document}
